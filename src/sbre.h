@@ -24,15 +24,15 @@
 
 #define SBRE_TRANSPARENT 	(Color) { 255, 255, 255, 255 }
 
-#define SBRE_WHITE 			(Color) { 255, 255, 255, 255 }
+#define SBRE_WHITE          (Color) { 255, 255, 255, 255 }
 
-#define SBRE_BLACK 			(Color) { 0, 0, 0, 255 }
+#define SBRE_BLACK          (Color) { 0, 0, 0, 255 }
 
-#define SBRE_RED 			(Color) { 255, 0, 0, 255 }
+#define SBRE_RED            (Color) { 255, 0, 0, 255 }
 
-#define SBRE_GREEN 			(Color) { 0, 255, 0, 255 }
+#define SBRE_GREEN          (Color) { 0, 255, 0, 255 }
 
-#define SBRE_BLUE 			(Color) { 0, 0, 255, 255 }
+#define SBRE_BLUE           (Color) { 0, 0, 255, 255 }
 
 
 
