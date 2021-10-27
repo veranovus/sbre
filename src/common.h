@@ -26,13 +26,39 @@
 
 /* Macros */
 
+/* Renderer */
+
 #define SBRE_DEFAULT_SHADER  1
 
+#define NORMALIZE_RGBA(r, g, b, a) ((Color) { r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f })
 
 
-/* Typedefs */
 
-typedef GLFWwindow SBREwindow;
+/* Colors */
+
+#define SBRE_TRANSPARENT 	(Color) { 255, 255, 255, 255 }
+
+#define SBRE_WHITE 			(Color) { 255, 255, 255, 255 }
+
+#define SBRE_BLACK 			(Color) { 0, 0, 0, 255 }
+
+#define SBRE_RED 			(Color) { 255, 0, 0, 255 }
+
+#define SBRE_GREEN 			(Color) { 0, 255, 0, 255 }
+
+#define SBRE_BLUE 			(Color) { 0, 0, 255, 255 }
+
+
+
+/* Type Initializers */
+
+#define SBRE_VEC2(x, y) 		((Vec2)  { x, y })
+
+#define SBRE_VEC3(x, y, z)		((Vec3)  { x, y, z })
+
+#define SBRE_VEC4(x, y, z, w) 	((Vec4)  { x, y, z, w })
+
+#define SBRE_COLOR(r, g, b, a) 	((Color) { r, g, b, a })
 
 
 
@@ -205,6 +231,10 @@ void _SBRE_terminate_render_systems(void);
 /* Individual Render Functions */
 
 void SBRE_draw_quad(Vec2 pos, float width, float height, Color color);
+
+
+
+void SBRE_draw_quad_outline(Vec2 pos, float width, float height, float border, Color quad_color, Color border_color);
 
 
 

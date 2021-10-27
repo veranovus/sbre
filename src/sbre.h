@@ -13,8 +13,39 @@
 
 /* Macros*/
 
+/* Renderer */
+
 /* SBRE's default shaders id, use this to activate default shader */
 #define SBRE_DEFAULT_SHADER  1
+
+
+
+/* Colors */
+
+#define SBRE_TRANSPARENT 	(Color) { 255, 255, 255, 255 }
+
+#define SBRE_WHITE 			(Color) { 255, 255, 255, 255 }
+
+#define SBRE_BLACK 			(Color) { 0, 0, 0, 255 }
+
+#define SBRE_RED 			(Color) { 255, 0, 0, 255 }
+
+#define SBRE_GREEN 			(Color) { 0, 255, 0, 255 }
+
+#define SBRE_BLUE 			(Color) { 0, 0, 255, 255 }
+
+
+
+/* Type Initializers */
+
+#define SBRE_VEC2(x, y) 		((Vec2)  { x, y })
+
+#define SBRE_VEC3(x, y, z)		((Vec3)  { x, y, z })
+
+#define SBRE_VEC4(x, y, z, w) 	((Vec4)  { x, y, z, w })
+
+#define SBRE_COLOR(r, g, b, a) 	((Color) { r, g, b, a })
+
 
 
 
@@ -89,6 +120,8 @@ void SBRE_set_clear_color(Color clear_color);
 
 
 
+/* Clears the COLOR_BUFFER_BIT and the STENCIL_BUFFFER_BIT each time its called. 
+ * Simply clears the display */
 void SBRE_clear(void);
 
 
@@ -177,6 +210,11 @@ void _SBRE_set_view_matrix(Mat4 view);
 
 /* Draws a colored quad with the given parameters */
 void SBRE_draw_quad(Vec2 pos, float width, float height, Color color);
+
+
+
+/* Draws a quad outlien with given parameters. This function clears the STENCIL_BUFFER_BIT be aware of that. */
+void SBRE_draw_quad_outline(Vec2 pos, float width, float height, float border, Color quad_color, Color border_color);
 
 
 

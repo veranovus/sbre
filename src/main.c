@@ -25,11 +25,13 @@ int main(void) {
 	
 	while(!SBRE_window_should_close()) {
 		
-		SBRE_set_clear_color((Color){ 0.2f, 0.1f, 0.5f, 1.0f });
+		SBRE_set_clear_color((Color){ 67.5, 25, 122.5, 255 });
 		SBRE_clear();
 
 
-		SBRE_draw_quad((Vec2) { 50.0f, 50.0f }, 50.0f, 50.0f, (Color) { 0.4f, 0.1f, 1.0f, 1.0f });
+		SBRE_draw_quad(SBRE_VEC2(50.0f, 50.0f), 50.0f, 50.0f, SBRE_COLOR(123, 50, 255, 255));
+
+		SBRE_draw_quad_outline(SBRE_VEC2(200.0f, 200.0f), 50.0f, 50.0f, 2.0f, SBRE_COLOR(123, 50, 255, 255), SBRE_WHITE);
 
 
 		SBRE_display();

@@ -3,7 +3,7 @@
 
 /* GLFW / Window */
 
-SBREwindow* _SBRE_main_window;
+GLFWwindow* _SBRE_main_window;
 
 
 
@@ -53,12 +53,6 @@ bool SBRE_init(int SCREEN_WIDTH, int SCREEN_HEIGHT, const char* TITLE, int vsync
         glfwTerminate();
         return false;
     }
-	
-
-	// Enable Blending
-
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 
 	// Set the main_window
@@ -109,14 +103,14 @@ bool SBRE_window_should_close(void) {
 
 void SBRE_set_clear_color(Color clear_color) {
 	
-	glClearColor(clear_color.r, clear_color.g, clear_color.b, clear_color.a);
+	glClearColor(clear_color.r / 255.0f, clear_color.g / 255.0f, clear_color.b / 255.0f, clear_color.a / 255.0f);
 }
 
 
 
 void SBRE_clear(void) {
 	
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 }
 
 

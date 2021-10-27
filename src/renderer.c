@@ -89,6 +89,15 @@ uint32_t _SBRE_active_shader = 0;
 
 void _SBRE_init_render_systems(void) {
 
+	/* Enable OpenGL Attributes */
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glEnable(GL_STENCIL_TEST);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+
+
 	/* Compile and Use the Default Shader */
 
 	_SBRE_default_shader = _SBRE_create_shader_from_string(_SBRE_vertex_shader_source, _SBRE_fragment_shader_source);
@@ -230,35 +239,60 @@ void _SBRE_set_view_matrix(Mat4 view) {
 
 /* Renderer */
 
-static void _SBRE_set_vertex(Vec2 pos, float width, float height, Color color) {
+static void _SBRE_set_vertices(Vec2 pos, float width, float height, Color color) {
 
 	float index = 0.0f;
 
+	Color normalized_color = NORMALIZE_RGBA(color.r, color.g, color.b ,color.a);
+
+
 	_SBRE_renderer.quad_buffer_ptr->pos = (Vec2){ pos.x, pos.y };
-	_SBRE_renderer.quad_buffer_ptr->color = (Color){ color.r, color.g, color.b, color.a };
+	_SBRE_renderer.quad_buffer_ptr->color = normalized_color;
 	_SBRE_renderer.quad_buffer_ptr->tex_coord = (Vec2){ 0.0f, 1.0f };
 	_SBRE_renderer.quad_buffer_ptr->index = index;
 	_SBRE_renderer.quad_buffer_ptr++;
 	
 	_SBRE_renderer.quad_buffer_ptr->pos = (Vec2){ pos.x + width, pos.y };
-	_SBRE_renderer.quad_buffer_ptr->color = (Color){ color.r, color.g, color.b, color.a };
+	_SBRE_renderer.quad_buffer_ptr->color = normalized_color;
 	_SBRE_renderer.quad_buffer_ptr->tex_coord = (Vec2){ 1.0f, 1.0f };
 	_SBRE_renderer.quad_buffer_ptr->index = index;
 	_SBRE_renderer.quad_buffer_ptr++;
 
 	_SBRE_renderer.quad_buffer_ptr->pos = (Vec2){ pos.x, pos.y + height};
-	_SBRE_renderer.quad_buffer_ptr->color = (Color){ color.r, color.g, color.b, color.a };
+	_SBRE_renderer.quad_buffer_ptr->color = normalized_color;
 	_SBRE_renderer.quad_buffer_ptr->tex_coord = (Vec2){ 0.0f, 0.0f };
 	_SBRE_renderer.quad_buffer_ptr->index = index;
 	_SBRE_renderer.quad_buffer_ptr++;
 
 	_SBRE_renderer.quad_buffer_ptr->pos = (Vec2){ pos.x + width, pos.y + height };
-	_SBRE_renderer.quad_buffer_ptr->color = (Color){ color.r, color.g, color.b, color.a };
+	_SBRE_renderer.quad_buffer_ptr->color = normalized_color;
 	_SBRE_renderer.quad_buffer_ptr->tex_coord = (Vec2){ 1.0f, 0.0f };
 	_SBRE_renderer.quad_buffer_ptr->index = index;
 	_SBRE_renderer.quad_buffer_ptr++;
 
+
 	_SBRE_renderer.quad_buffer_ptr = _SBRE_renderer.quad_buffer;
+}
+
+
+
+static void _SBRE_set_vertex_buffer(void) {
+
+	glBindBuffer(GL_ARRAY_BUFFER, _SBRE_renderer.vbo);
+	glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(Vertex), _SBRE_renderer.quad_buffer, GL_STATIC_DRAW);
+
+
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, pos));
+    glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, color));
+    glEnableVertexAttribArray(1);
+
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, tex_coord));
+    glEnableVertexAttribArray(2);
+
+    glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, index));
+    glEnableVertexAttribArray(3);
 }
 
 
@@ -288,33 +322,108 @@ void SBRE_draw_quad(Vec2 pos, float width, float height, Color color) {
 
 	/* Set Vertices */
 
-	_SBRE_set_vertex(pos, width, height, color);
+	_SBRE_set_vertices(pos, width, height, color);
 
 
 	/* Set Buffers */
 
 	glBindVertexArray(_SBRE_renderer.vao);
 
-	glBindBuffer(GL_ARRAY_BUFFER, _SBRE_renderer.vbo);
-	glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(Vertex), _SBRE_renderer.quad_buffer, GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, pos));
-    glEnableVertexAttribArray(0);
-
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, color));
-    glEnableVertexAttribArray(1);
-
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, tex_coord));
-    glEnableVertexAttribArray(2);
-
-    glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, index));
-    glEnableVertexAttribArray(3);
+	_SBRE_set_vertex_buffer();
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, _SBRE_default_texture->texture_id);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _SBRE_renderer.ebo);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+}
+
+
+
+void SBRE_draw_quad_outline(Vec2 pos, float width, float height, float border, Color quad_color, Color border_color) {
+
+	/* TODO : Make it so that this function works with border values bellow 0 */
+
+	/* Default Shader */
+
+	if (_SBRE_active_shader == _SBRE_default_shader)
+		SBRE_use_shader(_SBRE_default_shader);
+
+
+	/* Send default texture to the shader */
+
+	int sampler[16];
+	for (int i = 0; i < 16; ++i)
+		sampler[i] = i;
+	int32_t location = glGetUniformLocation(_SBRE_active_shader, "u_textures");
+	glUniform1iv(location, 16, sampler);
+
+
+	/* Send the default mvp */
+
+	Mat4 mvp = _SBRE_calculate_mvp();
+	SBRE_set_uniform_mat4f(_SBRE_active_shader, "u_mvp", mvp);
+
+
+	/* Draw the Mask Rectangle */
+
+	/* Set Vertices */
+
+	// NOTE : Added border twice to the width and height because, its also being added to the position.
+	_SBRE_set_vertices((Vec2) { pos.x + border, pos.y + border }, width - border * 2, height - border * 2, quad_color );
+
+
+	/* Set the Stencil Buffer to Write */
+
+	glStencilFunc(GL_ALWAYS, 1, 0xFF);
+	glStencilMask(0xFF);
+
+
+	/* Set Buffers */
+
+	glBindVertexArray(_SBRE_renderer.vao);
+
+	_SBRE_set_vertex_buffer();
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, _SBRE_default_texture->texture_id);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _SBRE_renderer.ebo);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+
+	/* Draw the Outline */ 
+
+	/* Set Vertices */
+
+	_SBRE_set_vertices(pos, width, height, border_color);
+
+
+	/* Set the Stencil Buffer to Only Draw When not 1 */
+
+	glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+	glStencilMask(0x00);
+
+
+	/* Set Buffers */
+
+	glBindVertexArray(_SBRE_renderer.vao);
+
+	_SBRE_set_vertex_buffer();
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, _SBRE_default_texture->texture_id);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _SBRE_renderer.ebo);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+
+	/* Set the Stencil Buffer to Normal Again */
+
+	glClear(GL_STENCIL_BUFFER_BIT);
+
+	glStencilMask(0xFF);
+	glStencilFunc(GL_ALWAYS, 0, 0xFF);
 }
 
 
@@ -344,27 +453,14 @@ void SBRE_draw_texture(Vec2 pos, Texture* texture) {
 
 	/* Set Vertices */
 
-	_SBRE_set_vertex(pos, texture->width, texture->height, texture->color);
+	_SBRE_set_vertices(pos, texture->width, texture->height, texture->color);
 
 
 	/* Set Buffers */
 
 	glBindVertexArray(_SBRE_renderer.vao);
 
-	glBindBuffer(GL_ARRAY_BUFFER, _SBRE_renderer.vbo);
-	glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(Vertex), _SBRE_renderer.quad_buffer, GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, pos));
-    glEnableVertexAttribArray(0);
-
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, color));
-    glEnableVertexAttribArray(1);
-
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, tex_coord));
-    glEnableVertexAttribArray(2);
-
-    glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, index));
-    glEnableVertexAttribArray(3);
+	_SBRE_set_vertex_buffer();
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, texture->texture_id);
