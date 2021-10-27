@@ -62,6 +62,14 @@
 
 
 
+/* Texture Filter */
+
+#define SBRE_NEAREST 0x2600
+
+#define SBRE_LINEAR 0x2601
+
+
+
 /* Window */
 
 extern uint32_t _SBRE_WINDOW_HEIGHT;
@@ -154,19 +162,23 @@ void SBRE_display(void);
 
 
 
-/* Input */
-
-
-
-
-
 void SBRE_poll_events(void);
+
+
+
+/* Input */ 
+
+bool SBRE_get_key_press(int key_code);
+
+
+
+bool SBRE_get_key_release(int key_code);
 
 
 
 /* Texture */
 
-Texture* SBRE_load_texture(const char* filepath);
+Texture* SBRE_load_texture(const char* filepath, uint32_t filter);
 
 
 

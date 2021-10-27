@@ -21,7 +21,7 @@ int main(void) {
 	if (!SBRE_init(SCREEN_WIDTH, SCREEN_HEIGHT, TITLE, VSync))
 		return -1;
 
-	
+
 	while(!SBRE_window_should_close()) {
 		
 		SBRE_set_clear_color((Color){ 67.5, 25, 122.5, 255 });

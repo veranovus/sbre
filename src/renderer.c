@@ -239,9 +239,7 @@ void _SBRE_set_view_matrix(Mat4 view) {
 
 /* Renderer */
 
-static void _SBRE_set_vertices(Vec2 pos, float width, float height, Color color) {
-
-	float index = 0.0f;
+static void _SBRE_set_vertices(Vec2 pos, float width, float height, Color color, float index) {
 
 	Color normalized_color = NORMALIZE_RGBA(color.r, color.g, color.b ,color.a);
 
@@ -322,7 +320,7 @@ void SBRE_draw_quad(Vec2 pos, float width, float height, Color color) {
 
 	/* Set Vertices */
 
-	_SBRE_set_vertices(pos, width, height, color);
+	_SBRE_set_vertices(pos, width, height, color, 0);
 
 
 	/* Set Buffers */
@@ -365,12 +363,18 @@ void SBRE_draw_quad_outline(Vec2 pos, float width, float height, float border, C
 	SBRE_set_uniform_mat4f(_SBRE_active_shader, "u_mvp", mvp);
 
 
+	/* Bind the Defualt Texture */
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, _SBRE_default_texture->texture_id); 
+
+
 	/* Draw the Mask Rectangle */
 
 	/* Set Vertices */
 
 	// NOTE : Added border twice to the width and height because, its also being added to the position.
-	_SBRE_set_vertices((Vec2) { pos.x + border, pos.y + border }, width - border * 2, height - border * 2, quad_color );
+	_SBRE_set_vertices(SBRE_VEC2(pos.x + border, pos.y + border), width - border * 2, height - border * 2, quad_color, 0);
 
 
 	/* Set the Stencil Buffer to Write */
@@ -385,9 +389,6 @@ void SBRE_draw_quad_outline(Vec2 pos, float width, float height, float border, C
 
 	_SBRE_set_vertex_buffer();
 
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, _SBRE_default_texture->texture_id);
-
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _SBRE_renderer.ebo);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
@@ -396,7 +397,7 @@ void SBRE_draw_quad_outline(Vec2 pos, float width, float height, float border, C
 
 	/* Set Vertices */
 
-	_SBRE_set_vertices(pos, width, height, border_color);
+	_SBRE_set_vertices(pos, width, height, border_color, 0);
 
 
 	/* Set the Stencil Buffer to Only Draw When not 1 */
@@ -410,9 +411,6 @@ void SBRE_draw_quad_outline(Vec2 pos, float width, float height, float border, C
 	glBindVertexArray(_SBRE_renderer.vao);
 
 	_SBRE_set_vertex_buffer();
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, _SBRE_default_texture->texture_id);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _SBRE_renderer.ebo);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -429,7 +427,7 @@ void SBRE_draw_quad_outline(Vec2 pos, float width, float height, float border, C
 
 
 void SBRE_draw_texture(Vec2 pos, Texture* texture) {
-
+	
 	/* Default Shader */
 
 	if (_SBRE_active_shader == _SBRE_default_shader)
@@ -453,7 +451,7 @@ void SBRE_draw_texture(Vec2 pos, Texture* texture) {
 
 	/* Set Vertices */
 
-	_SBRE_set_vertices(pos, texture->width, texture->height, texture->color);
+	_SBRE_set_vertices(pos, texture->width, texture->height, texture->color, 1);
 
 
 	/* Set Buffers */
@@ -462,9 +460,11 @@ void SBRE_draw_texture(Vec2 pos, Texture* texture) {
 
 	_SBRE_set_vertex_buffer();
 
-	glActiveTexture(GL_TEXTURE0);
+	glActiveTexture(GL_TEXTURE0 + 1);
 	glBindTexture(GL_TEXTURE_2D, texture->texture_id);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _SBRE_renderer.ebo);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
 }

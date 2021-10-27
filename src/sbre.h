@@ -48,6 +48,14 @@
 
 
 
+/* Texture Filter */
+
+#define SBRE_NEAREST 0x2600
+
+#define SBRE_LINEAR 0x2601
+
+
+
 /* Input */
 
 #define SBRE_KEY_UNKNOWN   -1
@@ -272,7 +280,7 @@ bool SBRE_get_key_release(int key_code);
 
 /* Texture */
 
-Texture* SBRE_load_texture(const char* filepath);
+Texture* SBRE_load_texture(const char* filepath, uint32_t filter);
 
 
 

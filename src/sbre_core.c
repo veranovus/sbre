@@ -150,8 +150,19 @@ void SBRE_poll_events(void) {
 
 /* Texture */
 
-Texture* SBRE_load_texture(const char* filepath) {
+Texture* SBRE_load_texture(const char* filepath, uint32_t filter) {
 	
+	FILE* fp = NULL;
+	fp = fopen(filepath, "r");
+
+	if (!(fp)) {
+		printf("[SBRE Error][Image file \"%s\" could not be opened.]\n", filepath);
+		fclose(fp);
+		return NULL;
+	}
+	
+	fclose(fp);
+
 	uint32_t texture_id;
 	int width, height, bpp;
 	
@@ -161,8 +172,8 @@ Texture* SBRE_load_texture(const char* filepath) {
 	glGenTextures(1, &texture_id);
 	glBindTexture(GL_TEXTURE_2D, texture_id);
 	
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	
@@ -174,7 +185,7 @@ Texture* SBRE_load_texture(const char* filepath) {
 	Texture* t = (Texture*) malloc(sizeof(Texture));
 	*t = (Texture){
 		.texture_id = texture_id,
-		.color = (Color) { 1.0f, 1.0f, 1.0f, 1.0f },
+		.color = SBRE_COLOR(255, 255, 255, 255),
 		.width = width,
 		.height = height,
 		.bpp = bpp
