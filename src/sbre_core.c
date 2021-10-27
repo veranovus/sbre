@@ -7,6 +7,23 @@ GLFWwindow* _SBRE_main_window;
 
 
 
+/* Input */
+
+bool SBRE_get_key_press(int key_code) {
+
+	return glfwGetKey(_SBRE_main_window, key_code) == GLFW_PRESS;
+}
+
+
+
+bool SBRE_get_key_release(int key_code) {
+
+	return glfwGetKey(_SBRE_main_window, key_code) == GLFW_RELEASE;
+}
+
+
+
+
 /* Core Initialization */
 
 bool SBRE_init(int SCREEN_WIDTH, int SCREEN_HEIGHT, const char* TITLE, int vsync) {
@@ -93,6 +110,8 @@ void SBRE_terminate(void) {
 }
 
 
+
+/* Core */
 
 bool SBRE_window_should_close(void) {
 	

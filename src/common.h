@@ -154,6 +154,12 @@ void SBRE_display(void);
 
 
 
+/* Input */
+
+
+
+
+
 void SBRE_poll_events(void);
 
 

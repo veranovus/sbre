@@ -22,7 +22,7 @@
 
 /* Colors */
 
-#define SBRE_TRANSPARENT 	(Color) { 255, 255, 255, 255 }
+#define SBRE_TRANSPARENT	(Color) { 255, 255, 255, 255 }
 
 #define SBRE_WHITE          (Color) { 255, 255, 255, 255 }
 
@@ -46,6 +46,132 @@
 
 #define SBRE_COLOR(r, g, b, a)  ((Color) { r, g, b, a })
 
+
+
+/* Input */
+
+#define SBRE_KEY_UNKNOWN   -1
+#define SBRE_KEY_SPACE   32
+#define SBRE_KEY_APOSTROPHE   39 
+#define SBRE_KEY_COMMA   44 
+#define SBRE_KEY_MINUS   45 
+#define SBRE_KEY_PERIOD   46 
+#define SBRE_KEY_SLASH   47 
+#define SBRE_KEY_0   48
+#define SBRE_KEY_1   49
+#define SBRE_KEY_2   50
+#define SBRE_KEY_3   51
+#define SBRE_KEY_4   52
+#define SBRE_KEY_5   53
+#define SBRE_KEY_6   54
+#define SBRE_KEY_7   55
+#define SBRE_KEY_8   56
+#define SBRE_KEY_9   57
+#define SBRE_KEY_SEMICOLON   59
+#define SBRE_KEY_EQUAL   61 
+#define SBRE_KEY_A   65
+#define SBRE_KEY_B   66
+#define SBRE_KEY_C   67
+#define SBRE_KEY_D   68
+#define SBRE_KEY_E   69
+#define SBRE_KEY_F   70
+#define SBRE_KEY_G   71
+#define SBRE_KEY_H   72
+#define SBRE_KEY_I   73
+#define SBRE_KEY_J   74
+#define SBRE_KEY_K   75
+#define SBRE_KEY_L   76
+#define SBRE_KEY_M   77
+#define SBRE_KEY_N   78
+#define SBRE_KEY_O   79
+#define SBRE_KEY_P   80
+#define SBRE_KEY_Q   81
+#define SBRE_KEY_R   82
+#define SBRE_KEY_S   83
+#define SBRE_KEY_T   84
+#define SBRE_KEY_U   85
+#define SBRE_KEY_V   86
+#define SBRE_KEY_W   87
+#define SBRE_KEY_X   88
+#define SBRE_KEY_Y   89
+#define SBRE_KEY_Z   90
+#define SBRE_KEY_LEFT_BRACKET   91 
+#define SBRE_KEY_BACKSLASH   92 
+#define SBRE_KEY_RIGHT_BRACKET   93 
+#define SBRE_KEY_GRAVE_ACCENT   96 
+#define SBRE_KEY_WORLD_1   161 
+#define SBRE_KEY_WORLD_2   162 
+#define SBRE_KEY_ESCAPE   256
+#define SBRE_KEY_ENTER   257
+#define SBRE_KEY_TAB   258
+#define SBRE_KEY_BACKSPACE   259
+#define SBRE_KEY_INSERT   260
+#define SBRE_KEY_DELETE   261
+#define SBRE_KEY_RIGHT   262
+#define SBRE_KEY_LEFT   263
+#define SBRE_KEY_DOWN   264
+#define SBRE_KEY_UP   265
+#define SBRE_KEY_PAGE_UP   266
+#define SBRE_KEY_PAGE_DOWN   267
+#define SBRE_KEY_HOME   268
+#define SBRE_KEY_END   269
+#define SBRE_KEY_CAPS_LOCK   280
+#define SBRE_KEY_SCROLL_LOCK   281
+#define SBRE_KEY_NUM_LOCK   282
+#define SBRE_KEY_PRINT_SCREEN   283
+#define SBRE_KEY_PAUSE   284
+#define SBRE_KEY_F1   290
+#define SBRE_KEY_F2   291
+#define SBRE_KEY_F3   292
+#define SBRE_KEY_F4   293
+#define SBRE_KEY_F5   294
+#define SBRE_KEY_F6   295
+#define SBRE_KEY_F7   296
+#define SBRE_KEY_F8   297
+#define SBRE_KEY_F9   298
+#define SBRE_KEY_F10   299
+#define SBRE_KEY_F11   300
+#define SBRE_KEY_F12   301
+#define SBRE_KEY_F13   302
+#define SBRE_KEY_F14   303
+#define SBRE_KEY_F15   304
+#define SBRE_KEY_F16   305
+#define SBRE_KEY_F17   306
+#define SBRE_KEY_F18   307
+#define SBRE_KEY_F19   308
+#define SBRE_KEY_F20   309
+#define SBRE_KEY_F21   310
+#define SBRE_KEY_F22   311
+#define SBRE_KEY_F23   312
+#define SBRE_KEY_F24   313
+#define SBRE_KEY_F25   314
+#define SBRE_KEY_KP_0   320
+#define SBRE_KEY_KP_1   321
+#define SBRE_KEY_KP_2   322
+#define SBRE_KEY_KP_3   323
+#define SBRE_KEY_KP_4   324
+#define SBRE_KEY_KP_5   325
+#define SBRE_KEY_KP_6   326
+#define SBRE_KEY_KP_7   327
+#define SBRE_KEY_KP_8   328
+#define SBRE_KEY_KP_9   329
+#define SBRE_KEY_KP_DECIMAL   330
+#define SBRE_KEY_KP_DIVIDE   331
+#define SBRE_KEY_KP_MULTIPLY   332
+#define SBRE_KEY_KP_SUBTRACT   333
+#define SBRE_KEY_KP_ADD   334
+#define SBRE_KEY_KP_ENTER   335
+#define SBRE_KEY_KP_EQUAL   336
+#define SBRE_KEY_LEFT_SHIFT   340
+#define SBRE_KEY_LEFT_CONTROL   341
+#define SBRE_KEY_LEFT_ALT   342
+#define SBRE_KEY_LEFT_SUPER   343
+#define SBRE_KEY_RIGHT_SHIFT   344
+#define SBRE_KEY_RIGHT_CONTROL   345
+#define SBRE_KEY_RIGHT_ALT   346
+#define SBRE_KEY_RIGHT_SUPER   347
+#define SBRE_KEY_MENU   348
+#define SBRE_KEY_LAST   SBRE_KEY_MENU
 
 
 
@@ -131,6 +257,16 @@ void SBRE_display(void);
 
 
 void SBRE_poll_events(void);
+
+
+
+/* Input */ 
+
+bool SBRE_get_key_press(int key_code);
+
+
+
+bool SBRE_get_key_release(int key_code);
 
 
 
