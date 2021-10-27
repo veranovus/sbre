@@ -38,13 +38,13 @@
 
 /* Type Initializers */
 
-#define SBRE_VEC2(x, y) 		((Vec2)  { x, y })
+#define SBRE_VEC2(x, y)         ((Vec2)  { x, y })
 
-#define SBRE_VEC3(x, y, z)		((Vec3)  { x, y, z })
+#define SBRE_VEC3(x, y, z)      ((Vec3)  { x, y, z })
 
-#define SBRE_VEC4(x, y, z, w) 	((Vec4)  { x, y, z, w })
+#define SBRE_VEC4(x, y, z, w)   ((Vec4)  { x, y, z, w })
 
-#define SBRE_COLOR(r, g, b, a) 	((Color) { r, g, b, a })
+#define SBRE_COLOR(r, g, b, a)  ((Color) { r, g, b, a })
 
 
 
