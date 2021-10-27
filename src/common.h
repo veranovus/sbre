@@ -192,6 +192,16 @@ void _SBRE_set_view_matrix(Mat4 view);
 
 
 
+/* Renderer */
+
+void _SBRE_init_render_systems(void);
+
+
+
+void _SBRE_terminate_render_systems(void);
+
+
+
 /* Individual Render Functions */
 
 void SBRE_draw_quad(Vec2 pos, float width, float height, Color color);

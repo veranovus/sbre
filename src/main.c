@@ -21,7 +21,7 @@ int main(void) {
 
 	if (!SBRE_init(SCREEN_WIDTH, SCREEN_HEIGHT, TITLE, VSync))
 		return -1;
-	
+
 	
 	while(!SBRE_window_should_close()) {
 		
@@ -29,7 +29,7 @@ int main(void) {
 		SBRE_clear();
 
 
-		SBRE_draw_quad((Vec2){ 50.0f, 50.0f }, 50.0f, 50.0f, (Color){ 0.4f, 0.1f, 1.0f, 1.0f });
+		SBRE_draw_quad((Vec2) { 50.0f, 50.0f }, 50.0f, 50.0f, (Color) { 0.4f, 0.1f, 1.0f, 1.0f });
 
 
 		SBRE_display();

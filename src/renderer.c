@@ -63,7 +63,7 @@ typedef struct BatchRenderer {
 /* Renderers */
 
 static Renderer _SBRE_renderer;
-
+static BatchRenderer _SBRE_batch_renderer;
 
 
 /* Renderer Properties */
@@ -148,23 +148,23 @@ void _SBRE_init_render_systems(void) {
 		.quad_buffer_ptr = NULL,
 	};
 
-	/*_SBRE_renderer = {
+	_SBRE_batch_renderer = (BatchRenderer) {
 		
-		.vao = 0;
-		.vbo = 0;
-		.ebo = 0;
+		.vao = 0,
+		.vbo = 0,
+		.ebo = 0,
 		
-		.index_count = 0;
+		.index_count = 0,
 		
-		.quad_buffer = NULL;
-		.quad_buffer_ptr = NULL;
+		.quad_buffer = NULL,
+		.quad_buffer_ptr = NULL,
 		
-		.texture_slots;
-		.texture_index = 0;
+		.texture_slots = NULL,
+		.texture_index = 0,
 		
-		.rs_ender_count = 0;
-		.rs_quad_count = 0;
-	}*/
+		.rs_ender_count = 0,
+		.rs_quad_count = 0,
+	};
 
 	_SBRE_renderer.quad_buffer = (Vertex*) calloc(4, sizeof(Vertex));
 	_SBRE_renderer.quad_buffer_ptr = _SBRE_renderer.quad_buffer;
@@ -205,7 +205,7 @@ void _SBRE_terminate_render_systems(void) {
 
 /* MVP Matrix */
 
-static Mat4 _SBRE_calculate_mvp() {
+static Mat4 _SBRE_calculate_mvp(void) {
 
 	glm_mat4_mul(&_SBRE_mvp.proj.r1, &_SBRE_mvp.view.r1, &_SBRE_mvp.mvp.r1);
 
