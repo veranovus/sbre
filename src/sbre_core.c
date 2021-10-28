@@ -1,9 +1,84 @@
 #include "common.h"
 
 
+
 /* GLFW / Window */
 
 GLFWwindow* _SBRE_main_window;
+
+
+
+/* Delta Time Varaibles */
+
+static const double _SBRE_delta_time_high = 0.1;
+static double _SBRE_last_frame_time;
+static double _SBRE_current_frame_time;
+double _SBRE_delta_time;
+
+
+
+/* FPS Variables */
+
+static double _SBRE_previous_time;
+static double _SBRE_current_time;
+static double _SBRE_time_diff;
+static uint32_t _SBRE_fps_counter;
+static uint32_t _SBRE_FPS;
+static double _SBRE_frame_time;
+
+
+
+/* Delta Time */
+
+void SBRE_calculate_delta_time(void) {
+
+    _SBRE_current_frame_time = glfwGetTime();
+
+    _SBRE_delta_time = _SBRE_current_frame_time - _SBRE_last_frame_time;
+    if (_SBRE_delta_time > _SBRE_delta_time_high)
+        _SBRE_delta_time = _SBRE_delta_time_high;
+
+    _SBRE_last_frame_time = _SBRE_current_frame_time;
+}
+
+
+
+double SBRE_delta_time(void) {
+
+	return _SBRE_delta_time;
+}
+
+
+
+/* FPS */
+
+void SBRE_calculate_fps(void) {
+
+	_SBRE_current_time = glfwGetTime();
+    _SBRE_time_diff = _SBRE_current_time - _SBRE_previous_time;
+    _SBRE_fps_counter++;
+
+    if (_SBRE_time_diff >= 1 / 30.0) {
+		_SBRE_FPS = (1.0 / _SBRE_time_diff) * _SBRE_fps_counter;
+        _SBRE_frame_time = (_SBRE_time_diff / _SBRE_fps_counter) * 1000;
+        _SBRE_previous_time = _SBRE_current_time;
+		_SBRE_fps_counter = 0;
+    }
+}
+
+
+
+uint32_t SBRE_fps(void) {
+	
+	return _SBRE_FPS;
+}
+
+
+
+double SBRE_frame_time(void) {
+
+	return _SBRE_frame_time;
+}
 
 
 
@@ -195,5 +270,58 @@ Texture* SBRE_load_texture(const char* filepath, uint32_t filter) {
 }
 
 
+// FIXME : FIX THIS
+
+/*
+#define CIMGUI_DEFINE_ENUMS_AND_STRUCTS
+#include <cimgui/cimgui.h>
+#include <cimgui/imgui_impl_glfw.h>
+#include <cimgui/imgui_impl_opengl3.h>
+
+static void error_callback(int e, const char *d)
+{printf("Error %d: %s\n", e, d);}
 
 
+struct ImGuiContext* ctx;
+struct ImGuiIO* io;
+    
+void gui_init() {
+    // IMGUI_CHECKVERSION();
+    ctx = igCreateContext(NULL);
+    io  = igGetIO();
+
+    const char* glsl_version = "#version 330 core";
+    ImGui_ImplGlfw_InitForOpenGL(_SBRE_main_window, true);
+    ImGui_ImplOpenGL3_Init(glsl_version);
+
+    // Setup style
+    igStyleColorsDark(NULL);
+}
+
+void gui_terminate() {
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    igDestroyContext(ctx);
+}
+
+void gui_render() {
+    igRender();
+    ImGui_ImplOpenGL3_RenderDrawData(igGetDrawData());
+}
+
+void gui_update() {
+	
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    igNewFrame();
+
+    igBegin("Test", NULL, 0);
+    igText("Test");
+    igButton("Test",(struct ImVec2){0,0});
+    igEnd();
+
+    // // Normally user code doesn't need/want to call this because positions are saved in .ini file anyway. 
+    // // Here we just want to make the demo initial state a bit more friendly!
+    // igSetNextWindowPos((struct ImVec2){0,0}, ImGuiCond_FirstUseEver,(struct ImVec2){0,0} ); 
+    igShowDemoWindow(NULL);
+}*/

@@ -9,6 +9,15 @@ include_directories(/opt/homebrew/Cellar/glfw/3.3.4/include)
 link_directories(/opt/homebrew/Cellar/glew/2.2.0_1/lib)
 link_directories(/opt/homebrew/Cellar/glfw/3.3.4/lib)
 
+# Freetype-gl include directories
+include_directories(/Users/batuhanyigit/Documents/C-C++Deps/freetype-gl/freetype-gl)
+link_directories(/Users/batuhanyigit/Documents/C-C++Deps/freetype-gl/freetype-gl)
+
+
+# Freetype include directories
+include_directories(/opt/homebrew/Cellar/freetype/2.11.0/include)
+include_directories(/opt/homebrew/Cellar/freetype/2.11.0/lib)
+
 # Vendor include directories
 include_directories(src/vendor)
 
@@ -31,3 +40,9 @@ find_package(glfw3 REQUIRED)
 target_link_libraries(sbre PRIVATE glfw.3.3)
 find_package(GLEW REQUIRED)
 target_link_libraries(sbre PRIVATE GLEW)
+
+# Link freetype
+target_link_libraries(sbre PRIVATE freetype)
+
+# Link Freetype GL
+target_link_libraries(sbre PRIVATE libfreetype-gl.a)

@@ -268,6 +268,30 @@ void SBRE_poll_events(void);
 
 
 
+/* Delta Time */
+
+void SBRE_calculate_delta_time(void);
+
+
+
+double SBRE_delta_time(void);
+
+
+
+/* FPS */
+
+void SBRE_calculate_fps(void);
+
+
+
+uint32_t SBRE_fps(void);
+
+
+
+double SBRE_frame_time(void);
+
+
+
 /* Input */ 
 
 bool SBRE_get_key_press(int key_code);
@@ -367,3 +391,10 @@ void SBRE_draw_texture(Vec2 pos, Texture* texture);
 
 
 
+void gui_init();
+
+void gui_terminate();
+
+void gui_render();
+
+void gui_update();

@@ -166,6 +166,30 @@ void SBRE_poll_events(void);
 
 
 
+/* Delta Time */
+
+void SBRE_calculate_delta_time(void);
+
+
+
+double SBRE_delta_time(void);
+
+
+
+/* FPS */
+
+void SBRE_calculate_fps(void);
+
+
+
+uint32_t SBRE_fps(void);
+
+
+
+double SBRE_frame_time(void);
+
+
+
 /* Input */ 
 
 bool SBRE_get_key_press(int key_code);
