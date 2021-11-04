@@ -390,11 +390,5 @@ void SBRE_draw_texture(Vec2 pos, Texture* texture);
 
 
 
+void SBRE_draw_circle(Vec2 pos, float radius, Color color);
 
-void gui_init();
-
-void gui_terminate();
-
-void gui_render();
-
-void gui_update();

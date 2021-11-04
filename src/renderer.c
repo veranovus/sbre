@@ -74,7 +74,9 @@ static const uint32_t MAX_INDEX = MAX_QUAD * 6;
 
 
 static Texture* _SBRE_default_texture;
+
 static uint32_t _SBRE_default_shader;
+static uint32_t _SBRE_default_circle_shader;
 
 
 int32_t MAX_TEXTURE_SLOTS;
@@ -98,7 +100,7 @@ void _SBRE_init_render_systems(void) {
 	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
 
-	/* Compile and Use the Default Shader */
+	/* Compile and Use the Default Shaders */
 
 	_SBRE_default_shader = _SBRE_create_shader_from_string(_SBRE_vertex_shader_source, _SBRE_fragment_shader_source);
 
@@ -107,6 +109,15 @@ void _SBRE_init_render_systems(void) {
 		printf("[SBRE Error][Default shader coult not compile.]\n");
 		return;
 	}
+
+	_SBRE_default_circle_shader = _SBRE_create_shader_from_string(_SBRE_vertex_shader_source, _SBRE_circle_fragment_shader_source);
+
+	if (!(_SBRE_default_circle_shader)) {
+
+		printf("[SBRE Error][Default circle shader could not compile.]\n");
+		return;
+	}
+
 
 	SBRE_use_shader(_SBRE_default_shader);	
 
@@ -299,7 +310,7 @@ void SBRE_draw_quad(Vec2 pos, float width, float height, Color color) {
 
 	/* Default Shader */
 
-	if (_SBRE_active_shader == _SBRE_default_shader)
+	if (_SBRE_active_shader == _SBRE_default_shader || _SBRE_active_shader == _SBRE_default_circle_shader)
 		SBRE_use_shader(_SBRE_default_shader);
 
 
@@ -344,7 +355,7 @@ void SBRE_draw_quad_outline(Vec2 pos, float width, float height, float border, C
 
 	/* Default Shader */
 
-	if (_SBRE_active_shader == _SBRE_default_shader)
+	if (_SBRE_active_shader == _SBRE_default_shader || _SBRE_active_shader == _SBRE_default_circle_shader)
 		SBRE_use_shader(_SBRE_default_shader);
 
 
@@ -430,7 +441,7 @@ void SBRE_draw_texture(Vec2 pos, Texture* texture) {
 	
 	/* Default Shader */
 
-	if (_SBRE_active_shader == _SBRE_default_shader)
+	if (_SBRE_active_shader == _SBRE_default_shader || _SBRE_active_shader == _SBRE_default_circle_shader)
 		SBRE_use_shader(_SBRE_default_shader);
 
 
@@ -468,3 +479,54 @@ void SBRE_draw_texture(Vec2 pos, Texture* texture) {
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
+
+
+
+void SBRE_draw_circle(Vec2 pos, float radius, Color color) {
+
+	/* Default Shader */
+
+	if (_SBRE_active_shader == _SBRE_default_shader || _SBRE_active_shader == _SBRE_default_circle_shader)
+		SBRE_use_shader(_SBRE_default_circle_shader);
+
+
+	/* Send default texture to the shader */
+
+	int sampler[16];
+	for (int i = 0; i < 16; ++i)
+		sampler[i] = i;
+	int32_t location = glGetUniformLocation(_SBRE_active_shader, "u_textures");
+	glUniform1iv(location, 16, sampler);
+
+
+	SBRE_set_uniform_1f(_SBRE_active_shader, "u_thickness", 0.1); // FIXME : Remove this line later
+
+
+	/* Send the default mvp */
+
+	Mat4 mvp = _SBRE_calculate_mvp();
+	SBRE_set_uniform_mat4f(_SBRE_active_shader, "u_mvp", mvp);
+
+
+	/* Set Vertices */
+
+	_SBRE_set_vertices(pos, radius * 2, radius * 2, color, 0);
+
+
+	/* Set Buffers */
+
+	glBindVertexArray(_SBRE_renderer.vao);
+
+	_SBRE_set_vertex_buffer();
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, _SBRE_default_texture->texture_id);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _SBRE_renderer.ebo);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+}
+
+
+
+/* Batch Renderer */
+

@@ -52,6 +52,8 @@ int main(void) {
 
 		SBRE_draw_quad_outline(pos, 50.0f, 50.0f, 2.0f, SBRE_COLOR(123, 50, 255, 255), SBRE_WHITE);
 
+		SBRE_draw_circle(SBRE_VEC2(200.0f, 200.0f), 30.0f, SBRE_WHITE);
+
 
 		SBRE_display();
 		SBRE_poll_events();

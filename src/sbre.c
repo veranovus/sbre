@@ -13,6 +13,7 @@ uint32_t _SBRE_WINDOW_HEIGHT;
 
 
 
+// TODO : Remove u_color from these shaders
 /* Default Shaders */
 
 const char* _SBRE_vertex_shader_source = "#version 330 core\n"
@@ -46,7 +47,6 @@ const char* _SBRE_fragment_shader_source = "#version 330 core\n"
                                            "\n"
                                            "out vec4 color;\n"
                                            "\n"
-                                           "uniform vec4 u_color;\n"
                                            "uniform sampler2D u_textures[16];\n"
                                            "\n"
                                            "void main() {\n"
@@ -54,3 +54,37 @@ const char* _SBRE_fragment_shader_source = "#version 330 core\n"
                                            "    int index = int(fragTexIndex);\n"
                                            "    color = texture(u_textures[index], fragTexPos) * fragColor;\n"
                                            "}\n";
+
+
+
+const char* _SBRE_circle_fragment_shader_source = "#version 330 core\n"
+                                                  "\n"
+                                                  "in vec4 fragColor;\n"
+                                                  "in vec2 fragTexPos;\n"
+                                                  "in float fragTexIndex;\n"
+                                                  "\n"
+                                                  "out vec4 color;\n"
+                                                  "\n"
+                                                  "uniform float u_thickness;\n"
+                                                  "uniform sampler2D u_textures[16];\n"
+                                                  "\n"
+                                                  "void main() {\n"
+                                                  "\n"
+                                                  "    int index = int(fragTexIndex);\n"
+                                                  "    float fade = 0.005;\n"
+                                                  "\n"
+                                                  "    vec2 uv = fragTexPos;\n"
+                                                  "    uv = uv * 2 - 1;\n"
+                                                  "    float distance = 1 - length(uv);\n"
+                                                  "    vec4 col = vec4(smoothstep(0.0, fade, distance));\n"
+                                                  "    col *= vec4(smoothstep(u_thickness + fade, u_thickness, distance));\n"
+                                                  "\n"
+                                                  "    if (distance > 0) {\n"
+                                                  "        if (distance <= u_thickness + fade)"
+                                                  "            color = texture(u_textures[index], fragTexPos) * fragColor * col;\n"
+                                                  "        else\n"
+                                                  "            discard;\n"
+                                                  "    }"
+                                                  "    else\n"
+                                                  "        discard;\n"
+                                                  "}\n";

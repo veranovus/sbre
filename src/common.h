@@ -93,6 +93,10 @@ extern const char* _SBRE_fragment_shader_source;
 
 
 
+extern const char* _SBRE_circle_fragment_shader_source;
+
+
+
 /* SBRE types */
 
 typedef struct Vec2 {
@@ -281,6 +285,10 @@ void SBRE_draw_quad_outline(Vec2 pos, float width, float height, float border, C
 
 
 void SBRE_draw_texture(Vec2 pos, Texture* texture);
+
+
+
+void SBRE_draw_circle(Vec2 pos, float radius, Color color);
 
 
 
