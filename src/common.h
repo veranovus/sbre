@@ -16,6 +16,7 @@
 
 /* C Standart Library  */
 #include <stdio.h>
+#include <math.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
@@ -36,7 +37,7 @@
 
 /* Colors */
 
-#define SBRE_TRANSPARENT 	(Color) { 255, 255, 255, 255 }
+#define SBRE_TRANSPARENT 	(Color) { 255, 255, 255, 0 }
 
 #define SBRE_WHITE 			(Color) { 255, 255, 255, 255 }
 
@@ -96,6 +97,11 @@ extern const char* _SBRE_fragment_shader_source;
 extern const char* _SBRE_circle_fragment_shader_source;
 
 
+/* Typedefs */
+
+typedef uint32_t SBRE_Shader;
+
+
 
 /* SBRE types */
 
@@ -129,6 +135,13 @@ typedef struct Mat4 {
 	float r3[4];
 	float r4[4];
 } Mat4;
+
+
+
+typedef struct Rectangle {
+	Vec2 position;
+	float width, height;
+} Rectangle;
 
 
 
@@ -284,7 +297,7 @@ void SBRE_draw_quad_outline(Vec2 pos, float width, float height, float border, C
 
 
 
-void SBRE_draw_texture(Vec2 pos, Texture* texture);
+void SBRE_draw_texture(Vec2 pos, Texture* texture, Rectangle* texture_rect);
 
 
 

@@ -20,12 +20,18 @@ int main(void) {
 		return -1;
 
 
-	Vec2 pos = SBRE_VEC2(0, 0);
-	float speed = 100;
-
 	double delta_time;
 
 
+	Vec2 pos = SBRE_VEC2(0, 0);
+	float speed = 100;
+
+
+	Texture* texture = SBRE_load_texture("../res/sprite_sheet.png", SBRE_NEAREST);
+	texture->width  *= 2;
+	texture->height *= 2;
+	
+	
 	while(!SBRE_window_should_close()) {
 
 		SBRE_calculate_delta_time();
@@ -48,6 +54,7 @@ int main(void) {
 		SBRE_clear();
 
 
+		SBRE_use_shader(SBRE_DEFAULT_SHADER);
 		SBRE_draw_quad(SBRE_VEC2(50.0f, 50.0f), 50.0f, 50.0f, SBRE_COLOR(123, 50, 255, 255));
 
 		SBRE_draw_quad_outline(pos, 50.0f, 50.0f, 2.0f, SBRE_COLOR(123, 50, 255, 255), SBRE_WHITE);

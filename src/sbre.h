@@ -22,7 +22,7 @@
 
 /* Colors */
 
-#define SBRE_TRANSPARENT	(Color) { 255, 255, 255, 255 }
+#define SBRE_TRANSPARENT	(Color) { 255, 255, 255, 0 }
 
 #define SBRE_WHITE          (Color) { 255, 255, 255, 255 }
 
@@ -185,6 +185,8 @@
 
 /* Typdefs */
 
+typedef uint32_t SBRE_Shader;
+
 
 
 /* Structs */
@@ -219,6 +221,13 @@ typedef struct Mat4 {
 	float r3[4];
 	float r4[4];
 } Mat4;
+
+
+
+typedef struct Rectangle {
+	Vec2 position;
+	float width, height;
+} Rectangle;
 
 
 
@@ -386,7 +395,7 @@ void SBRE_draw_quad_outline(Vec2 pos, float width, float height, float border, C
 
 
 
-void SBRE_draw_texture(Vec2 pos, Texture* texture);
+void SBRE_draw_texture(Vec2 pos, Texture* texture, Rectangle* texture_rect);
 
 
 
