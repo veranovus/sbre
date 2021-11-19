@@ -401,3 +401,7 @@ void SBRE_draw_texture(Vec2 pos, Texture* texture, Rectangle* texture_rect);
 
 void SBRE_draw_circle(Vec2 pos, float radius, Color color);
 
+
+
+/* Draws 2 circles, one for the fill and one for the outline. Doesn't clears the STENCIL_BUFFER_BIT. */
+void SBRE_draw_circle_outline(Vec2 pos, float radius, float border, Color fill_color, Color outline_color);

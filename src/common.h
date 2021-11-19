@@ -305,6 +305,10 @@ void SBRE_draw_circle(Vec2 pos, float radius, Color color);
 
 
 
+void SBRE_draw_circle_outline(Vec2 pos, float radius, float border, Color fill_color, Color outline_color);
+
+
+
 #ifndef NDEBUG
 /* Debugging */
 

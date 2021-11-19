@@ -602,9 +602,6 @@ void SBRE_draw_circle_outline(Vec2 pos, float radius, float border, Color fill_c
 	glUniform1iv(location, 16, sampler);
 
 
-	SBRE_set_uniform_1f(_SBRE_active_shader, "u_thickness", 1);
-
-
 	/* Send the default mvp */
 
 	Mat4 mvp = _SBRE_calculate_mvp();
@@ -620,6 +617,20 @@ void SBRE_draw_circle_outline(Vec2 pos, float radius, float border, Color fill_c
 	};	
 
 
+	/* Activate the Texture */
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, _SBRE_default_texture->texture_id);
+
+
+
+	/* Draw the Fill */
+
+	/* Set the fill thickness */
+
+	SBRE_set_uniform_1f(_SBRE_active_shader, "u_thickness", 1);
+
+
 	/* Set Vertices */
 
 	_SBRE_set_vertices(pos, radius * 2, radius * 2, fill_color, 0, text_rect);
@@ -631,8 +642,28 @@ void SBRE_draw_circle_outline(Vec2 pos, float radius, float border, Color fill_c
 
 	_SBRE_set_vertex_buffer();
 
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, _SBRE_default_texture->texture_id);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _SBRE_renderer.ebo);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+
+
+	/* Draw the Outline */
+
+	/* Set the outline thickness */
+
+	SBRE_set_uniform_1f(_SBRE_active_shader, "u_thickness", border);
+
+
+	/* Set Vertices*/
+
+	_SBRE_set_vertices(pos, radius * 2, radius * 2, outline_color, 0, text_rect);
+
+
+	/* Set Buffers */
+
+	glBindVertexArray(_SBRE_renderer.vao);
+
+	_SBRE_set_vertex_buffer();
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _SBRE_renderer.ebo);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

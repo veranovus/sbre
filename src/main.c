@@ -62,6 +62,12 @@ int main(void) {
 		SBRE_draw_circle(SBRE_VEC2(200.0f, 200.0f), 30.0f, SBRE_WHITE);
 
 
+		SBRE_draw_circle_outline(SBRE_VEC2(250.0f, 200.0f), 30.0f, 0.1f, SBRE_RED, SBRE_WHITE);
+
+
+		SBRE_draw_circle_outline(SBRE_VEC2(300.0f, 400.0f), 30.0f, 0.1f, SBRE_BLUE, SBRE_WHITE);
+
+
 		SBRE_display();
 		SBRE_poll_events();
 	}
