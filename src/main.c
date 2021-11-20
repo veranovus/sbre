@@ -1,11 +1,6 @@
 #include "sbre.h"
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <freetype-gl.h>
-
-
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
 #define TITLE "SBRE"
@@ -15,7 +10,6 @@
 
 int main(void) {
 	
-
 	if (!SBRE_init(SCREEN_WIDTH, SCREEN_HEIGHT, TITLE, VSync))
 		return -1;
 
@@ -27,10 +21,8 @@ int main(void) {
 	float speed = 100;
 
 
-	Texture* texture = SBRE_load_texture("../res/sprite_sheet.png", SBRE_NEAREST);
-	texture->width  *= 2;
-	texture->height *= 2;
-	
+	//SBRE_test_freetype();
+
 	
 	while(!SBRE_window_should_close()) {
 
@@ -54,18 +46,13 @@ int main(void) {
 		SBRE_clear();
 
 
-		SBRE_use_shader(SBRE_DEFAULT_SHADER);
 		SBRE_draw_quad(SBRE_VEC2(50.0f, 50.0f), 50.0f, 50.0f, SBRE_COLOR(123, 50, 255, 255));
 
 		SBRE_draw_quad_outline(pos, 50.0f, 50.0f, 2.0f, SBRE_COLOR(123, 50, 255, 255), SBRE_WHITE);
 
 		SBRE_draw_circle(SBRE_VEC2(200.0f, 200.0f), 30.0f, SBRE_WHITE);
 
-
-		SBRE_draw_circle_outline(SBRE_VEC2(250.0f, 200.0f), 30.0f, 0.1f, SBRE_RED, SBRE_WHITE);
-
-
-		SBRE_draw_circle_outline(SBRE_VEC2(300.0f, 400.0f), 30.0f, 0.1f, SBRE_BLUE, SBRE_WHITE);
+		SBRE_draw_circle_outline(SBRE_VEC2(300.0f, 200.0f), 30.0f, 0.1f, SBRE_RED, SBRE_WHITE);
 
 
 		SBRE_display();

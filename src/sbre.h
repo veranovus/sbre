@@ -234,6 +234,7 @@ typedef struct Rectangle {
 typedef struct Texture {
 	uint32_t texture_id;
 	Vec4 color;
+	int initial_width, initial_height;
 	int width, height, bpp;
 } Texture;
 
@@ -314,6 +315,18 @@ bool SBRE_get_key_release(int key_code);
 /* Texture */
 
 Texture* SBRE_load_texture(const char* filepath, uint32_t filter);
+
+
+
+/* Use this to change a certain part of a texture to another texture. Original texture size (size of the image in pixels) 
+ * is used here so, you cant load a texture bigger than the target. */
+void SBRE_load_texture_to_texture(Texture* texture, const char* filepath, int32_t offset_x, int32_t offset_y);
+
+
+
+/* Font */
+
+void SBRE_test_freetype(void);
 
 
 

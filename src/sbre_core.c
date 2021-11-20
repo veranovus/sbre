@@ -261,7 +261,9 @@ Texture* SBRE_load_texture(const char* filepath, uint32_t filter) {
 	*t = (Texture){
 		.texture_id = texture_id,
 		.color = SBRE_COLOR(255, 255, 255, 255),
-		.width = width,
+		.initial_width  = width,
+		.initial_height = height,
+		.width  = width,
 		.height = height,
 		.bpp = bpp
 	};
@@ -269,3 +271,34 @@ Texture* SBRE_load_texture(const char* filepath, uint32_t filter) {
 	return t;
 }
 
+
+
+void SBRE_load_texture_to_texture(Texture* texture, const char* filepath, int32_t offset_x, int32_t offset_y) {
+
+	FILE* fp = NULL;
+	fp = fopen(filepath, "r");
+
+	if (!(fp)) {
+		printf("[SBRE Error][Image file \"%s\" could not be opened.]\n", filepath);
+		fclose(fp);
+		return;
+	}
+	
+	fclose(fp);
+
+	uint32_t texture_id;
+	int width, height, bpp;
+	
+	stbi_set_flip_vertically_on_load(1);
+	unsigned char* local_buffer = stbi_load(filepath, &width, &height, &bpp, 4);
+
+	/* Convert offset_y to opengl coordinates. */
+	offset_y = (texture->initial_height - height) - offset_y;
+	
+	glBindTexture(GL_TEXTURE_2D, texture->texture_id);
+	glTexSubImage2D(GL_TEXTURE_2D, 0, offset_x, offset_y, width, height, GL_RGBA, GL_UNSIGNED_BYTE, local_buffer);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	stbi_image_free(local_buffer);
+}
