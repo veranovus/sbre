@@ -4,10 +4,14 @@
  You can easilly write and use your custom shaders in SBRE. There are individual and batched rendering
  options availible.
 
- > Current version 0.02a
+ > Current version 0.03a
 
 ## TODO
 
-- Implement Text Rendering
+- Implement Font Rendering
 - Implement Rotated Drawing System
 - Implement Batch Rendering
+
+## Working On
+
+Font rendering.
