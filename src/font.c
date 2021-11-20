@@ -5,6 +5,7 @@
 #include FT_FREETYPE_H
 
 
+/* FIXME : Remove this function */
 void SBRE_test_freetype(void) {
 
     const char* font_path = "../res/font/press_start_2p/PressStart2P.ttf";
@@ -27,5 +28,5 @@ void SBRE_test_freetype(void) {
     FT_Set_Pixel_Sizes(face, 0, 48);
 
 
-        
+
 }

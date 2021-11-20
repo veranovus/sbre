@@ -326,6 +326,7 @@ void SBRE_load_texture_to_texture(Texture* texture, const char* filepath, int32_
 
 /* Font */
 
+/* FIXME : Remove this function */
 void SBRE_test_freetype(void);
 
 

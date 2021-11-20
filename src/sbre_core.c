@@ -259,6 +259,7 @@ Texture* SBRE_load_texture(const char* filepath, uint32_t filter) {
 	
 	Texture* t = (Texture*) malloc(sizeof(Texture));
 	*t = (Texture){
+		
 		.texture_id = texture_id,
 		.color = SBRE_COLOR(255, 255, 255, 255),
 		.initial_width  = width,
