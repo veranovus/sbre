@@ -492,9 +492,9 @@ void SBRE_draw_texture(Vec2 pos, Texture* texture, Rectangle* texture_rect) {
 	if (texture_rect) {
 
 		text_rect = (Rectangle) {
-			.position = (Vec2) { texture_rect->position.x / texture->width,  ((texture->height - texture_rect->height) - texture_rect->position.y) / texture->height},
-			.width 	= texture_rect->width  / texture->width,
-			.height = texture_rect->height / texture->height
+			.position = (Vec2) { texture_rect->position.x / texture->initial_width,  ((texture->initial_height - texture_rect->height) - texture_rect->position.y) / texture->initial_height},
+			.width 	= texture_rect->width  / texture->initial_width,
+			.height = texture_rect->height / texture->initial_height
 		};
 	}
 	else {
@@ -505,6 +505,61 @@ void SBRE_draw_texture(Vec2 pos, Texture* texture, Rectangle* texture_rect) {
 			.height = 1.0f
 		};
 	}
+
+
+	/* Set Vertices */
+
+	_SBRE_set_vertices(pos, texture->width, texture->height, texture->color, 1, text_rect);
+
+
+	/* Set Buffers */
+
+	glBindVertexArray(_SBRE_renderer.vao);
+
+	_SBRE_set_vertex_buffer();
+
+	glActiveTexture(GL_TEXTURE0 + 1);
+	glBindTexture(GL_TEXTURE_2D, texture->texture_id);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _SBRE_renderer.ebo);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+
+/* FIXME : Remove this */
+void SBRE_draw_char(Vec2 pos, Texture* texture, Rectangle* texture_rect) {
+	
+	/* Default Shader */
+
+	if (_SBRE_active_shader == _SBRE_default_shader || _SBRE_active_shader == _SBRE_default_circle_shader)
+		SBRE_use_shader(_SBRE_default_shader);
+
+
+	/* Send default texture to the shader */
+
+	int sampler[16];
+	for (int i = 0; i < 16; ++i)
+		sampler[i] = i;
+	int32_t location = glGetUniformLocation(_SBRE_active_shader, "u_textures");
+	glUniform1iv(location, 16, sampler);
+
+
+	/* Send the default mvp */
+
+	Mat4 mvp = _SBRE_calculate_mvp();
+	SBRE_set_uniform_mat4f(_SBRE_active_shader, "u_mvp", mvp);
+
+
+	/* Calculate Texture Position */
+
+	Rectangle text_rect = (Rectangle) {
+
+		.position = (Vec2) { texture_rect->position.x / texture->initial_width, texture_rect->position.y / texture->initial_height},
+		.width 	= texture_rect->width / texture->initial_width,
+		.height = texture_rect->height / texture->initial_height
+	};
 
 
 	/* Set Vertices */

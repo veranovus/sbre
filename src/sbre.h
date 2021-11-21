@@ -326,8 +326,24 @@ void SBRE_load_texture_to_texture(Texture* texture, const char* filepath, int32_
 
 /* Font */
 
-/* FIXME : Remove this function */
-void SBRE_test_freetype(void);
+/* FIXME : Remove all this */
+typedef struct SBRE_Character {
+    char character;
+    Vec2 offset;
+    Vec2 size;
+} SBRE_Character;
+
+
+
+void SBRE_draw_char(Vec2 pos, Texture* texture, Rectangle* texture_rect);
+
+
+
+Texture* SBRE_test_freetype(void);
+
+
+
+SBRE_Character get_character(char c);
 
 
 
