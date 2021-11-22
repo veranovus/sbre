@@ -52,7 +52,7 @@
 
 #define SBRE_NEAREST 0x2600
 
-#define SBRE_LINEAR 0x2601
+#define SBRE_LINEAR  0x2601
 
 
 
@@ -240,6 +240,24 @@ typedef struct Texture {
 
 
 
+typedef struct SBRE_Character {
+    char character;
+    Vec2 render_offset;
+    Vec2 size;
+    Vec2 bearing;
+    float advance;
+} SBRE_Character;
+
+
+
+typedef struct Font {
+    uint32_t font_size;
+    Texture* font_atlas;
+    SBRE_Character* _characters;
+} Font;
+
+
+
 /* Core */
 
 /* Initializez GLFW, GLEW and all other necessary components of the engine,
@@ -326,24 +344,12 @@ void SBRE_load_texture_to_texture(Texture* texture, const char* filepath, int32_
 
 /* Font */
 
-/* FIXME : Remove all this */
-typedef struct SBRE_Character {
-    char character;
-    Vec2 offset;
-    Vec2 size;
-} SBRE_Character;
+Font* SBRE_create_font(const char* font_path, uint32_t font_size, uint32_t filter);
 
 
 
-void SBRE_draw_char(Vec2 pos, Texture* texture, Rectangle* texture_rect);
-
-
-
-Texture* SBRE_test_freetype(void);
-
-
-
-SBRE_Character get_character(char c);
+/* Use this function to free the memory allocated for the font */
+void SBRE_free_font(Font* font);
 
 
 

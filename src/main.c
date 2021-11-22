@@ -24,13 +24,10 @@ int main(void) {
 	 * TODO : I managed to render every glyph available correctly, now only thing left to do is
 	 *		  implementing batch rendering for text.
 	 */
-	Texture* t = SBRE_test_freetype();
-
-	SBRE_Character ch = get_character('c');
-	float m = ch.offset.y;
-
-	t->width  = ch.size.x * 2;
-	t->height = ch.size.y * 2;
+	Font* font = SBRE_create_font("../res/font/press_start_2p/PressStart2P.ttf", 48, SBRE_NEAREST);
+	SBRE_Character ch = font->_characters['A'];
+	font->font_atlas->width  = ch.size.x;
+	font->font_atlas->height = ch.size.y;
 
 	
 	while(!SBRE_window_should_close()) {
@@ -56,7 +53,7 @@ int main(void) {
 
 
 		//SBRE_draw_texture(SBRE_VEC2(0, 0), t, NULL);
-		SBRE_draw_char(SBRE_VEC2(50, 50), t, &(Rectangle) { SBRE_VEC2(ch.offset.x, ch.offset.y), ch.size.x, ch.size.y });
+		//SBRE_draw_char(SBRE_VEC2(50, 50), font->font_atlas, &(Rectangle) { SBRE_VEC2(ch.render_offset.x, ch.render_offset.y), ch.size.x, ch.size.y });
 
 		/*
 		SBRE_draw_quad(SBRE_VEC2(50.0f, 50.0f), 50.0f, 50.0f, SBRE_COLOR(123, 50, 255, 255));
@@ -72,7 +69,11 @@ int main(void) {
 		SBRE_poll_events();
 	}
 	
-	
+
+	/* Cleanup */
+	SBRE_free_font(font);
+
+
 	SBRE_terminate();
 	return 0;
 }

@@ -154,6 +154,24 @@ typedef struct Texture {
 
 
 
+typedef struct SBRE_Character {
+    char character;
+    Vec2 render_offset;
+    Vec2 size;
+    Vec2 bearing;
+    float advance;
+} SBRE_Character;
+
+
+
+typedef struct Font {
+    uint32_t font_size;
+    Texture* font_atlas;
+    SBRE_Character* _characters;
+} Font;
+
+
+
 /* Core */
 
 bool SBRE_init(int SCREEN_WIDTH, int SCREEN_HEIGHT, const char* TITLE, int VSync);
@@ -225,6 +243,16 @@ Texture* SBRE_load_texture(const char* filepath, uint32_t filter);
 
 
 void SBRE_load_texture_to_texture(Texture* texture, const char* filepath, int32_t offset_x, int32_t offset_y);
+
+
+
+/* Font */
+
+Font* SBRE_create_font(const char* font_path, uint32_t font_size, uint32_t filter);
+
+
+
+void SBRE_free_font(Font* font);
 
 
 

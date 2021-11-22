@@ -4,7 +4,7 @@
  You can easilly write and use your custom shaders in SBRE. There are individual and batched rendering
  options availible.
 
- > Current version 0.03c
+ > Current version 0.03d
 
 ## TODO
 
