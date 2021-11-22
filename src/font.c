@@ -7,9 +7,8 @@
 
 
 /*
- * TODO : For some reason fonts were rendering black and white, I fixed it by adding an
+ * TODO : For some reason fonts were rendering black and red, I fixed it by adding an
  *        unneccesary complexity to the base shader. You might wanna fix this in the future.
- *        Text were rendering Black and Red in the past.
  */
 
 
