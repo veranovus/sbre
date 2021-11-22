@@ -195,8 +195,7 @@ Font* SBRE_create_font(const char* font_path, uint32_t font_size, uint32_t filte
     int height = face->bbox.yMax;
     uint32_t texture_id;
 
-    unsigned char* local_buffer = (unsigned char*) calloc(width * height * 4, sizeof(unsigned char));
-
+    unsigned char* local_buffer = (unsigned char*) calloc(width * height, sizeof(unsigned char));
 
     glGenTextures(1, &texture_id);
 	glBindTexture(GL_TEXTURE_2D, texture_id);
@@ -206,7 +205,7 @@ Font* SBRE_create_font(const char* font_path, uint32_t font_size, uint32_t filte
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, local_buffer);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width, height, 0, GL_RED, GL_UNSIGNED_BYTE, local_buffer);
 	glBindTexture(GL_TEXTURE_2D, 0);
     free(local_buffer);
 	
@@ -254,7 +253,8 @@ Font* SBRE_create_font(const char* font_path, uint32_t font_size, uint32_t filte
 
         .font_size = font_size,
         .font_atlas = t,
-        ._characters = (SBRE_Character*) calloc(128, sizeof(SBRE_Character))
+        .biggest_char = SBRE_VEC2(biggest_width, biggest_height),
+        ._characters = (SBRE_Character*) calloc(128, sizeof(SBRE_Character)),
     };
 
 
@@ -287,7 +287,7 @@ Font* SBRE_create_font(const char* font_path, uint32_t font_size, uint32_t filte
                 uint32_t initial_pos = (y * face->glyph->bitmap.width) + x;
                 uint32_t new_pos     = (((face->glyph->bitmap.rows - 1) - y) * face->glyph->bitmap.width) + x;
 
-                memcpy(flipped_image + new_pos, data + initial_pos, sizeof(unsigned char));
+                flipped_image[new_pos] = data[initial_pos];
             }
         }
 

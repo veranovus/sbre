@@ -20,14 +20,10 @@ int main(void) {
 	Vec2 pos = SBRE_VEC2(0, 0);
 	float speed = 100;
 
-	/* 
-	 * TODO : I managed to render every glyph available correctly, now only thing left to do is
-	 *		  implementing batch rendering for text.
-	 */
-	Font* font = SBRE_create_font("../res/font/press_start_2p/PressStart2P.ttf", 48, SBRE_NEAREST);
+
+	// TODO : Fix the black and red drawign problem
+	Font* font = SBRE_create_font("../res/font/arial/arial.ttf", 48, SBRE_NEAREST); //../res/font/press_start_2p/PressStart2P.ttf
 	SBRE_Character ch = font->_characters['A'];
-	font->font_atlas->width  = ch.size.x;
-	font->font_atlas->height = ch.size.y;
 
 	
 	while(!SBRE_window_should_close()) {
@@ -54,6 +50,8 @@ int main(void) {
 
 		//SBRE_draw_texture(SBRE_VEC2(0, 0), t, NULL);
 		//SBRE_draw_char(SBRE_VEC2(50, 50), font->font_atlas, &(Rectangle) { SBRE_VEC2(ch.render_offset.x, ch.render_offset.y), ch.size.x, ch.size.y });
+
+		SBRE_draw_text(SBRE_VEC2(50.0f, 50.0f), "Hello text!", font, SBRE_WHITE);
 
 		/*
 		SBRE_draw_quad(SBRE_VEC2(50.0f, 50.0f), 50.0f, 50.0f, SBRE_COLOR(123, 50, 255, 255));

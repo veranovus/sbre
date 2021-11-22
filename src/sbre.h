@@ -245,13 +245,14 @@ typedef struct SBRE_Character {
     Vec2 render_offset;
     Vec2 size;
     Vec2 bearing;
-    float advance;
+    uint32_t advance;
 } SBRE_Character;
 
 
 
 typedef struct Font {
     uint32_t font_size;
+	Vec2 biggest_char;
     Texture* font_atlas;
     SBRE_Character* _characters;
 } Font;
@@ -419,7 +420,7 @@ void _SBRE_set_view_matrix(Mat4 view);
 
 
 
-/* Individual Render Functions */
+/* Individual Render Functions (Not batched) */
 
 /* Draws a colored quad with the given parameters */
 void SBRE_draw_quad(Vec2 pos, float width, float height, Color color);
@@ -431,9 +432,6 @@ void SBRE_draw_quad_outline(Vec2 pos, float width, float height, float border, C
 
 
 
-void SBRE_draw_texture(Vec2 pos, Texture* texture, Rectangle* texture_rect);
-
-
 
 void SBRE_draw_circle(Vec2 pos, float radius, Color color);
 
@@ -441,3 +439,11 @@ void SBRE_draw_circle(Vec2 pos, float radius, Color color);
 
 /* Draws 2 circles, one for the fill and one for the outline. Doesn't clears the STENCIL_BUFFER_BIT. */
 void SBRE_draw_circle_outline(Vec2 pos, float radius, float border, Color fill_color, Color outline_color);
+
+
+
+void SBRE_draw_texture(Vec2 pos, Texture* texture, Rectangle* texture_rect);
+
+
+
+void SBRE_draw_text(Vec2 pos, const char* text, Font* font, Color color);

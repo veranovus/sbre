@@ -159,13 +159,14 @@ typedef struct SBRE_Character {
     Vec2 render_offset;
     Vec2 size;
     Vec2 bearing;
-    float advance;
+    uint32_t advance;
 } SBRE_Character;
 
 
 
 typedef struct Font {
     uint32_t font_size;
+	Vec2 biggest_char;
     Texture* font_atlas;
     SBRE_Character* _characters;
 } Font;

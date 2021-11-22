@@ -33,6 +33,15 @@ typedef struct Renderer {
 
 	Vertex* quad_buffer;
 	Vertex* quad_buffer_ptr;
+
+
+	uint32_t text_vao;
+	uint32_t text_vbo;
+	uint32_t text_ebo;
+
+	Vertex* text_buffer;
+	Vertex* text_buffer_ptr;
+	uint32_t text_char_count;
 	
 } Renderer;
 
@@ -53,7 +62,7 @@ typedef struct BatchRenderer {
 	uint32_t texture_index;
 
 	// Renderer Stats
-	uint32_t rs_ender_count;
+	uint32_t rs_render_count;
 	uint32_t rs_quad_count;
 	
 } BatchRenderer;
@@ -166,7 +175,23 @@ void _SBRE_init_render_systems(void) {
 		
 		.quad_buffer = NULL,
 		.quad_buffer_ptr = NULL,
+
+
+		.text_vao = 0,
+		.text_vbo = 0,
+		.text_ebo = 0,
+
+		.text_buffer = NULL,
+		.text_buffer_ptr = NULL,
+		.text_char_count = 0,
 	};
+
+	_SBRE_renderer.quad_buffer = (Vertex*) calloc(4, sizeof(Vertex));
+	_SBRE_renderer.quad_buffer_ptr = _SBRE_renderer.quad_buffer;
+
+	_SBRE_renderer.text_buffer = (Vertex*) calloc(MAX_VERTEX, sizeof(Vertex));
+	_SBRE_renderer.text_buffer_ptr = _SBRE_renderer.text_buffer;
+
 
 	_SBRE_batch_renderer = (BatchRenderer) {
 		
@@ -182,12 +207,9 @@ void _SBRE_init_render_systems(void) {
 		.texture_slots = NULL,
 		.texture_index = 0,
 		
-		.rs_ender_count = 0,
+		.rs_render_count = 0,
 		.rs_quad_count = 0,
 	};
-
-	_SBRE_renderer.quad_buffer = (Vertex*) calloc(4, sizeof(Vertex));
-	_SBRE_renderer.quad_buffer_ptr = _SBRE_renderer.quad_buffer;
 
 
 	/* Create and Initialize VAO and VBO */
@@ -212,6 +234,30 @@ void _SBRE_init_render_systems(void) {
     glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, index));
     glEnableVertexAttribArray(3);
 
+	glBindVertexArray(0);
+
+
+	glGenVertexArrays(1, &_SBRE_renderer.text_vao);
+	glBindVertexArray(_SBRE_renderer.text_vao);
+
+	glGenBuffers(1, &_SBRE_renderer.text_vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, _SBRE_renderer.text_vbo);
+	glBufferData(GL_ARRAY_BUFFER, MAX_VERTEX * sizeof(Vertex), NULL, GL_DYNAMIC_DRAW);
+
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, pos));
+    glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, color));
+    glEnableVertexAttribArray(1);
+
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, tex_coord));
+    glEnableVertexAttribArray(2);
+
+    glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, index));
+    glEnableVertexAttribArray(3);
+
+	glBindVertexArray(0);
+
 
 	/* Initialize Element Buffer Object it will only be used once. */
 
@@ -223,6 +269,27 @@ void _SBRE_init_render_systems(void) {
 	glGenBuffers(1, &_SBRE_renderer.ebo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _SBRE_renderer.ebo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * 6, indices, GL_STATIC_DRAW);
+
+
+	/* Initialize the Element Buffer Object for text */
+
+	unsigned int text_indices[MAX_INDEX];
+	unsigned int offset = 0;
+	for (uint32_t i = 0; i < MAX_INDEX; i += 6) {
+
+		text_indices[0 + i] = 0 + offset;
+        text_indices[1 + i] = 1 + offset;
+        text_indices[2 + i] = 2 + offset;
+        text_indices[3 + i] = 2 + offset;
+        text_indices[4 + i] = 3 + offset;
+        text_indices[5 + i] = 1 + offset;
+
+        offset += 4;
+	}
+
+	glGenBuffers(1, &_SBRE_renderer.text_ebo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _SBRE_renderer.text_ebo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(text_indices), text_indices, GL_STATIC_DRAW);
 }
 
 
@@ -526,6 +593,123 @@ void SBRE_draw_texture(Vec2 pos, Texture* texture, Rectangle* texture_rect) {
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
+
+
+
+static void SBRE_set_text_vertices(Vec2 pos, float width, float height, Color color, float index, Rectangle text_coord) {
+
+	Color normalized_color = NORMALIZE_RGBA(color.r, color.g, color.b ,color.a);
+
+	_SBRE_renderer.text_buffer_ptr->pos = (Vec2){ pos.x, pos.y };
+	_SBRE_renderer.text_buffer_ptr->color = normalized_color;
+	_SBRE_renderer.text_buffer_ptr->tex_coord = (Vec2){ text_coord.position.x, text_coord.position.y + text_coord.height };
+	_SBRE_renderer.text_buffer_ptr->index = index;
+	_SBRE_renderer.text_buffer_ptr++;
+	
+	_SBRE_renderer.text_buffer_ptr->pos = (Vec2){ pos.x + width, pos.y };
+	_SBRE_renderer.text_buffer_ptr->color = normalized_color;
+	_SBRE_renderer.text_buffer_ptr->tex_coord = (Vec2){ text_coord.position.x + text_coord.width, text_coord.position.y + text_coord.height };
+	_SBRE_renderer.text_buffer_ptr->index = index;
+	_SBRE_renderer.text_buffer_ptr++;
+
+	_SBRE_renderer.text_buffer_ptr->pos = (Vec2){ pos.x, pos.y + height};
+	_SBRE_renderer.text_buffer_ptr->color = normalized_color;
+	_SBRE_renderer.text_buffer_ptr->tex_coord = (Vec2){ text_coord.position.x, text_coord.position.y };
+	_SBRE_renderer.text_buffer_ptr->index = index;
+	_SBRE_renderer.text_buffer_ptr++;
+
+	_SBRE_renderer.text_buffer_ptr->pos = (Vec2){ pos.x + width, pos.y + height };
+	_SBRE_renderer.text_buffer_ptr->color = normalized_color;
+	_SBRE_renderer.text_buffer_ptr->tex_coord = (Vec2){ text_coord.position.x + text_coord.width, text_coord.position.y };
+	_SBRE_renderer.text_buffer_ptr->index = index;
+	_SBRE_renderer.text_buffer_ptr++;
+}
+
+
+
+void SBRE_draw_text(Vec2 pos, const char* text, Font* font, Color color) {
+
+	/* Default Shader */
+
+	if (_SBRE_active_shader == _SBRE_default_shader || _SBRE_active_shader == _SBRE_default_circle_shader)
+		SBRE_use_shader(_SBRE_default_shader);
+
+
+	/* Send default texture to the shader */
+
+	int sampler[16];
+	for (int i = 0; i < 16; ++i)
+		sampler[i] = i;
+	int32_t location = glGetUniformLocation(_SBRE_active_shader, "u_textures");
+	glUniform1iv(location, 16, sampler);
+
+
+	/* Send the default mvp */
+
+	Mat4 mvp = _SBRE_calculate_mvp();
+	SBRE_set_uniform_mat4f(_SBRE_active_shader, "u_mvp", mvp);
+
+
+	uint32_t quad_count = 0;
+	_SBRE_renderer.text_buffer_ptr = _SBRE_renderer.text_buffer;
+
+	Vec2 crnt_char_pos = pos;
+
+	uint32_t text_len = strlen(text);
+	for (int i = 0; i < text_len; ++i) {
+		
+		SBRE_Character crnt_char = font->_characters[text[i]];
+
+		Rectangle text_coord = (Rectangle) {
+			.position = (Vec2) { crnt_char.render_offset.x / font->font_atlas->initial_width, crnt_char.render_offset.y / font->font_atlas->initial_height},
+			.width 	= crnt_char.size.x / font->font_atlas->initial_width,
+			.height = crnt_char.size.y / font->font_atlas->initial_height
+		};
+		
+
+		Vec2 char_pos = SBRE_VEC2(
+			crnt_char_pos.x + crnt_char.bearing.x,
+			crnt_char_pos.y + (font->biggest_char.y - crnt_char.size.y) + (crnt_char.size.y - crnt_char.bearing.y)
+		);
+
+
+		SBRE_set_text_vertices(char_pos, crnt_char.size.x, crnt_char.size.y, color, 1, text_coord);
+		crnt_char_pos.x = char_pos.x + (crnt_char.advance >> 6); /* NOTE : Bitshift the value by 6 to get value in pixels */
+
+
+		quad_count += 1;
+		if (quad_count >= MAX_QUAD) {
+			
+			printf("[SBRE ERROR][Upper bound for not batched text rendering has been reached, SBRE were not able to render the whole text.\n");
+			printf("\tSuggestion : Consider using batched text rendering, or render the text in multiple render calls.]\n");
+			quad_count = MAX_QUAD;
+			break;
+		}
+	}
+	
+
+	/* Index and Vertex Count */
+
+	uint32_t vertex_count = quad_count * 4;
+	uint32_t index_count  = quad_count * 6;
+
+
+	/* Set Buffers */
+
+	glBindVertexArray(_SBRE_renderer.text_vao);
+
+	glBindBuffer(GL_ARRAY_BUFFER, _SBRE_renderer.text_vbo);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, vertex_count * sizeof(Vertex), (void*) _SBRE_renderer.text_buffer);
+
+	glActiveTexture(GL_TEXTURE0 + 1);
+	glBindTexture(GL_TEXTURE_2D, font->font_atlas->texture_id);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _SBRE_renderer.text_ebo);
+	glDrawElements(GL_TRIANGLES, index_count, GL_UNSIGNED_INT, 0);
+	
+	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
 
 
 /* FIXME : Remove this */
