@@ -59,11 +59,8 @@ const char* _SBRE_fragment_shader_source = "#version 330 core\n"
                                            "    \n"
                                            "    if (istext == 0)\n"
                                            "        color = tex_color * fragColor;\n"
-                                           "    else {\n"
-                                           "        if (tex_color.r > 0) {\n"
-                                           "            color = fragColor * tex_color.r;\n"
-                                           "        }\n"
-                                           "    }\n"
+                                           "    else\n"
+                                           "        color = vec4(1.0f, 1.0f, 1.0f, tex_color.r) * fragColor;\n"
                                            "}\n";
 
 
