@@ -1,5 +1,7 @@
 #include "common.h"
 
+#include "util/util.h"
+
 
 
 /* Structs */
@@ -372,6 +374,54 @@ static void _SBRE_set_vertices(Vec2 pos, float width, float height, Color color,
 
 
 
+static void _SBRE_set_vertices_rotated(Vec2 pos, float width, float height, Color color, float index, Rectangle text_coord, float rotation) {
+
+	Color normalized_color = NORMALIZE_RGBA(color.r, color.g, color.b ,color.a);
+
+
+	float mat2[4];
+	mat2[0] =  cos(rotation);
+	mat2[1] = -sin(rotation);
+	mat2[2] =  sin(rotation);
+	mat2[3] =  cos(rotation);
+
+	Vec2 ref_pos = SBRE_VEC2(pos.x + width / 2, pos.y + height / 2);
+
+	Vec2 ref_dir = SBRE_VEC2(0, 1);
+	Vec2 rot_direction = SBRE_VEC2(mat2[0] * ref_dir.x + mat2[1] * ref_dir.y,
+								   mat2[2] * ref_dir.x + mat2[3] * ref_dir.y);
+
+
+	_SBRE_renderer.quad_buffer_ptr->pos = util_add_vec2(util_add_vec2(ref_pos, util_multiply_vec2(rot_direction, -height / 2)), util_multiply_vec2(util_vec2_normal(rot_direction), -width / 2));
+	_SBRE_renderer.quad_buffer_ptr->color = normalized_color;
+	_SBRE_renderer.quad_buffer_ptr->tex_coord = (Vec2){ text_coord.position.x, text_coord.position.y + text_coord.height };
+	_SBRE_renderer.quad_buffer_ptr->index = index;
+	_SBRE_renderer.quad_buffer_ptr++;
+	
+	_SBRE_renderer.quad_buffer_ptr->pos = util_add_vec2(util_add_vec2(ref_pos, util_multiply_vec2(rot_direction, -height / 2)), util_multiply_vec2(util_vec2_normal(rot_direction),  width / 2));
+	_SBRE_renderer.quad_buffer_ptr->color = normalized_color;
+	_SBRE_renderer.quad_buffer_ptr->tex_coord = (Vec2){ text_coord.position.x + text_coord.width, text_coord.position.y + text_coord.height };
+	_SBRE_renderer.quad_buffer_ptr->index = index;
+	_SBRE_renderer.quad_buffer_ptr++;
+
+	_SBRE_renderer.quad_buffer_ptr->pos = util_add_vec2(util_add_vec2(ref_pos, util_multiply_vec2(rot_direction,  height / 2)), util_multiply_vec2(util_vec2_normal(rot_direction), -width / 2));	
+	_SBRE_renderer.quad_buffer_ptr->color = normalized_color;
+	_SBRE_renderer.quad_buffer_ptr->tex_coord = (Vec2){ text_coord.position.x, text_coord.position.y };
+	_SBRE_renderer.quad_buffer_ptr->index = index;
+	_SBRE_renderer.quad_buffer_ptr++;
+
+	_SBRE_renderer.quad_buffer_ptr->pos = util_add_vec2(util_add_vec2(ref_pos, util_multiply_vec2(rot_direction,  height / 2)), util_multiply_vec2(util_vec2_normal(rot_direction),  width / 2));
+	_SBRE_renderer.quad_buffer_ptr->color = normalized_color;
+	_SBRE_renderer.quad_buffer_ptr->tex_coord = (Vec2){ text_coord.position.x + text_coord.width, text_coord.position.y };
+	_SBRE_renderer.quad_buffer_ptr->index = index;
+	_SBRE_renderer.quad_buffer_ptr++;
+
+
+	_SBRE_renderer.quad_buffer_ptr = _SBRE_renderer.quad_buffer;
+}
+
+
+
 static void _SBRE_set_vertex_buffer(void) {
 
 	glBindBuffer(GL_ARRAY_BUFFER, _SBRE_renderer.vbo);
@@ -464,6 +514,59 @@ void SBRE_draw_quad(Vec2 pos, float width, float height, Color color) {
 
 
 
+void SBRE_draw_quad_ext(Vec2 pos, float width, float height, float rotation, Color color) {
+
+	/* Default Shader */
+
+	if (_SBRE_active_shader == _SBRE_default_shader || _SBRE_active_shader == _SBRE_default_circle_shader)
+		SBRE_use_shader(_SBRE_default_shader);
+
+
+	/* Send default texture to the shader */
+
+	int sampler[16];
+	for (int i = 0; i < 16; ++i)
+		sampler[i] = i;
+	int32_t location = glGetUniformLocation(_SBRE_active_shader, "u_textures");
+	glUniform1iv(location, 16, sampler);
+
+
+	/* Send the default mvp */
+
+	Mat4 mvp = _SBRE_calculate_mvp();
+	SBRE_set_uniform_mat4f(_SBRE_active_shader, "u_mvp", mvp);
+	SBRE_set_uniform_1f(_SBRE_active_shader, "u_istext", 0);
+
+
+	/* Calculate Texture Position */
+
+	Rectangle text_rect = (Rectangle) {
+		.position = (Vec2) { 0.0f, 0.0f },
+		.width 	= 1.0f,
+		.height = 1.0f
+	};
+
+
+	/* Set Vertices */
+
+	_SBRE_set_vertices_rotated(pos, width, height, color, 0, text_rect, rotation);
+
+
+	/* Set Buffers */
+
+	glBindVertexArray(_SBRE_renderer.vao);
+
+	_SBRE_set_vertex_buffer();
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, _SBRE_default_texture->texture_id);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _SBRE_renderer.ebo);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+}
+
+
+
 void SBRE_draw_quad_outline(Vec2 pos, float width, float height, float border, Color quad_color, Color border_color) {
 
 	/* TODO : Make it so that this function works with border values bellow 0 */
@@ -534,6 +637,104 @@ void SBRE_draw_quad_outline(Vec2 pos, float width, float height, float border, C
 	/* Set Vertices */
 
 	_SBRE_set_vertices(pos, width, height, border_color, 0, text_rect);
+
+
+	/* Set the Stencil Buffer to Only Draw When not 1 */
+
+	glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+	glStencilMask(0x00);
+
+
+	/* Set Buffers */
+
+	glBindVertexArray(_SBRE_renderer.vao);
+
+	_SBRE_set_vertex_buffer();
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _SBRE_renderer.ebo);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+
+	/* Set the Stencil Buffer to Normal Again */
+
+	glClear(GL_STENCIL_BUFFER_BIT);
+
+	glStencilMask(0xFF);
+	glStencilFunc(GL_ALWAYS, 0, 0xFF);
+}
+
+
+
+void SBRE_draw_quad_outline_ext(Vec2 pos, float width, float height, float border, float rotation, Color quad_color, Color border_color) {
+
+	/* TODO : Make it so that this function works with border values bellow 0 */
+
+	/* Default Shader */
+
+	if (_SBRE_active_shader == _SBRE_default_shader || _SBRE_active_shader == _SBRE_default_circle_shader)
+		SBRE_use_shader(_SBRE_default_shader);
+
+
+	/* Send default texture to the shader */
+
+	int sampler[16];
+	for (int i = 0; i < 16; ++i)
+		sampler[i] = i;
+	int32_t location = glGetUniformLocation(_SBRE_active_shader, "u_textures");
+	glUniform1iv(location, 16, sampler);
+
+
+	/* Send the default mvp */
+
+	Mat4 mvp = _SBRE_calculate_mvp();
+	SBRE_set_uniform_mat4f(_SBRE_active_shader, "u_mvp", mvp);
+	SBRE_set_uniform_1f(_SBRE_active_shader, "u_istext", 0);
+
+
+	/* Bind the Defualt Texture */
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, _SBRE_default_texture->texture_id); 
+
+
+	/* Calculate Texture Position */
+
+	Rectangle text_rect = (Rectangle) {
+		.position = (Vec2) { 0.0f, 0.0f },
+		.width 	= 1.0f,
+		.height = 1.0f
+	};
+
+
+	/* Draw the Mask Rectangle */
+
+	/* Set Vertices */
+
+	// NOTE : Added border twice to the width and height because, its also being added to the position.
+	_SBRE_set_vertices_rotated(SBRE_VEC2(pos.x + border, pos.y + border), width - border * 2, height - border * 2, quad_color, 0, text_rect, rotation);
+
+
+	/* Set the Stencil Buffer to Write */
+
+	glStencilFunc(GL_ALWAYS, 1, 0xFF);
+	glStencilMask(0xFF);
+
+
+	/* Set Buffers */
+
+	glBindVertexArray(_SBRE_renderer.vao);
+
+	_SBRE_set_vertex_buffer();
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _SBRE_renderer.ebo);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+
+	/* Draw the Outline */ 
+
+	/* Set Vertices */
+
+	_SBRE_set_vertices_rotated(pos, width, height, border_color, 0, text_rect, rotation);
 
 
 	/* Set the Stencil Buffer to Only Draw When not 1 */
@@ -754,6 +955,74 @@ void SBRE_draw_texture(Vec2 pos, Texture* texture, Rectangle* texture_rect) {
 	/* Set Vertices */
 
 	_SBRE_set_vertices(pos, texture->width, texture->height, texture->color, 1, text_rect);
+
+
+	/* Set Buffers */
+
+	glBindVertexArray(_SBRE_renderer.vao);
+
+	_SBRE_set_vertex_buffer();
+
+	glActiveTexture(GL_TEXTURE0 + 1);
+	glBindTexture(GL_TEXTURE_2D, texture->texture_id);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _SBRE_renderer.ebo);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+
+
+void SBRE_draw_texture_ext(Vec2 pos, Texture* texture, Rectangle* texture_rect, float rotation) {
+	
+	/* Default Shader */
+
+	if (_SBRE_active_shader == _SBRE_default_shader || _SBRE_active_shader == _SBRE_default_circle_shader)
+		SBRE_use_shader(_SBRE_default_shader);
+
+
+	/* Send default texture to the shader */
+
+	int sampler[16];
+	for (int i = 0; i < 16; ++i)
+		sampler[i] = i;
+	int32_t location = glGetUniformLocation(_SBRE_active_shader, "u_textures");
+	glUniform1iv(location, 16, sampler);
+
+
+	/* Send the default mvp */
+
+	Mat4 mvp = _SBRE_calculate_mvp();
+	SBRE_set_uniform_mat4f(_SBRE_active_shader, "u_mvp", mvp);
+	SBRE_set_uniform_1f(_SBRE_active_shader, "u_istext", 0);
+
+
+	/* Calculate Texture Position */
+
+	Rectangle text_rect;
+
+	if (texture_rect) {
+
+		text_rect = (Rectangle) {
+			.position = (Vec2) { texture_rect->position.x / texture->initial_width,  ((texture->initial_height - texture_rect->height) - texture_rect->position.y) / texture->initial_height},
+			.width 	= texture_rect->width  / texture->initial_width,
+			.height = texture_rect->height / texture->initial_height
+		};
+	}
+	else {
+
+		text_rect = (Rectangle) {
+			.position = (Vec2) { 0.0f, 0.0f },
+			.width 	= 1.0f,
+			.height = 1.0f
+		};
+	}
+
+
+	/* Set Vertices */
+
+	_SBRE_set_vertices_rotated(pos, texture->width, texture->height, texture->color, 1, text_rect, rotation);
 
 
 	/* Set Buffers */

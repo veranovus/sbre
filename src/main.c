@@ -27,13 +27,18 @@ int main(void) {
 	t->width  = 64;
 	t->height = 64;
 
-	
+
+	float rotation = 30;	
+
+
 	while(!SBRE_window_should_close()) {
 
 		SBRE_calculate_delta_time();
 		SBRE_calculate_fps();
 
 		delta_time = SBRE_delta_time();
+
+		rotation += 0.005;
 
 
 		if 		(SBRE_get_key_press(SBRE_KEY_A))
@@ -52,7 +57,7 @@ int main(void) {
 		
 		SBRE_draw_quad(SBRE_VEC2(50.0f, 50.0f), 50.0f, 50.0f, SBRE_COLOR(123, 50, 255, 255));
 
-		SBRE_draw_quad_outline(pos, 50.0f, 50.0f, 2.0f, SBRE_COLOR(123, 50, 255, 255), SBRE_WHITE);
+		SBRE_draw_quad_outline_ext(pos, 50.0f, 50.0f, 2.0f, rotation, SBRE_COLOR(123, 50, 255, 255), SBRE_WHITE);
 
 		SBRE_draw_circle(SBRE_VEC2(200.0f, 200.0f), 30.0f, SBRE_WHITE);
 
@@ -61,7 +66,7 @@ int main(void) {
 
 		SBRE_draw_text(SBRE_VEC2(50.0f, 50.0f), "Hello text!", font, SBRE_WHITE);
 
-		SBRE_draw_texture(SBRE_VEC2(100.0f, 350.0f), t, NULL);
+		SBRE_draw_texture_ext(SBRE_VEC2(100.0f, 350.0f), t, NULL, -rotation);
 
 		SBRE_draw_text(SBRE_VEC2(50.0f, 100.0f), "Phyton huh? C is way better.", font, SBRE_GREEN);
 

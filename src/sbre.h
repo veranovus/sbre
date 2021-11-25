@@ -427,9 +427,16 @@ void SBRE_draw_quad(Vec2 pos, float width, float height, Color color);
 
 
 
+void SBRE_draw_quad_ext(Vec2 pos, float width, float height, float rotation, Color color);
+
+
+
 /* Draws a quad outlien with given parameters. This function clears the STENCIL_BUFFER_BIT be aware of that. */
 void SBRE_draw_quad_outline(Vec2 pos, float width, float height, float border, Color quad_color, Color border_color);
 
+
+
+void SBRE_draw_quad_outline_ext(Vec2 pos, float width, float height, float border, float rotation, Color quad_color, Color border_color);
 
 
 
@@ -446,4 +453,9 @@ void SBRE_draw_texture(Vec2 pos, Texture* texture, Rectangle* texture_rect);
 
 
 
+void SBRE_draw_texture_ext(Vec2 pos, Texture* texture, Rectangle* texture_rect, float rotation);
+
+
+
 void SBRE_draw_text(Vec2 pos, const char* text, Font* font, Color color);
+

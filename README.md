@@ -4,11 +4,10 @@
  You can easilly write and use your custom shaders in SBRE. There are individual and batched rendering
  options availible. There is no 3D support currently and there won't be in the future.
 
- > Current version 0.04a
+ > Current version 0.05
 
 ## TODO
 
-- Implement Rotated Drawing System
 - Implement Batch Rendering
 
 ## Capabilities
@@ -17,7 +16,8 @@
 - Rendering Texture and Texture Atlas
 - Rendering Truetype Font
 - Full Support for Custom Shaders
+- Rotated Primitive and Textures Rendering
 
 ## Changes
 
-- Minor Shader Performance Update
+- Added Rotated Primitive and Textures Rendering
