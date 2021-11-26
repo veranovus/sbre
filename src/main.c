@@ -6,7 +6,9 @@
 #define TITLE "SBRE"
 #define VSync 0
 
-
+/*
+ * TODO : Something is causing a real bottleneck in the renderer find it.
+ */
 
 int main(void) {
 	
@@ -57,7 +59,7 @@ int main(void) {
 		SBRE_set_clear_color((Color){ 12.3, 2.5, 25, 255 });
 		SBRE_clear();
 
-		
+		/*		
 		SBRE_draw_quad(SBRE_VEC2(50.0f, 50.0f), 50.0f, 50.0f, SBRE_COLOR(123, 50, 255, 255));
 
 		SBRE_draw_quad_outline_ext(pos, 50.0f,50.0f, 2.0f, rotation, SBRE_COLOR(123, 50, 255, 255), SBRE_WHITE);
@@ -72,9 +74,24 @@ int main(void) {
 		SBRE_draw_texture_ext(SBRE_VEC2(100.0f, 350.0f), t, NULL, -rotation);
 
 		SBRE_draw_text(SBRE_VEC2(50.0f, 100.0f), "Phyton huh? C is way better.", font, SBRE_GREEN);
+		*/
+		
+		
+		SBRE_begin_batch();
 
+		for (int y = 0; y < 100; ++y) {
+
+			for (int x = 0; x < 100; ++x) {
+
+				SBRE_batch_render_quad(SBRE_VEC2(5 + (x * 25), 5 + (y * 25)), 20, 20, SBRE_COLOR(123, 50, 255, 255));
+			}
+		}
+
+		SBRE_end_batch();
+		SBRE_render_batch(true);
+
+		
 		SBRE_draw_text(SBRE_VEC2(0, 0), fps_text, font, SBRE_WHITE);
-
 
 		SBRE_display();
 		SBRE_poll_events();

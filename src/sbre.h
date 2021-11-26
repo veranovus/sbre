@@ -465,3 +465,22 @@ void SBRE_draw_texture_ext(Vec2 pos, Texture* texture, Rectangle* texture_rect, 
 
 void SBRE_draw_text(Vec2 pos, const char* text, Font* font, Color color);
 
+
+
+/* Batch Renderer */
+
+void SBRE_begin_batch(void);
+
+
+
+void SBRE_end_batch(void);
+
+
+
+void SBRE_render_batch(bool clear_stats);
+
+
+
+/* Batch Renderer Render Functions */
+
+void SBRE_batch_render_quad(Vec2 pos, float width, float height, Color color);

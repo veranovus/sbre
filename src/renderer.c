@@ -70,8 +70,8 @@ typedef struct BatchRenderer {
 	
 	uint32_t index_count;
 
-	Vertex* quad_buffer;
-	Vertex* quad_buffer_ptr;
+	Vertex_Ext* quad_buffer;
+	Vertex_Ext* quad_buffer_ptr;
 	
 	uint32_t* texture_slots;
 	uint32_t texture_index;
@@ -81,6 +81,14 @@ typedef struct BatchRenderer {
 	uint32_t rs_quad_count;
 	
 } BatchRenderer;
+
+
+
+/* Draw Types */
+
+#define DRAW_TYPE_QUAD		0
+#define DRAW_TYPE_TEXT		1
+#define DRAW_TYPE_CIRCLE	2
 
 
 
@@ -238,13 +246,13 @@ void _SBRE_init_render_systems(void) {
 		.quad_buffer_ptr = NULL,
 		
 		.texture_slots = NULL,
-		.texture_index = 0,
+		.texture_index = 1,
 		
 		.rs_render_count = 0,
 		.rs_quad_count = 0,
 	};
 
-	_SBRE_batch_renderer.quad_buffer = (Vertex*) calloc(MAX_VERTEX, sizeof(Vertex));
+	_SBRE_batch_renderer.quad_buffer = (Vertex_Ext*) calloc(MAX_VERTEX, sizeof(Vertex_Ext));
 	_SBRE_batch_renderer.quad_buffer_ptr = _SBRE_batch_renderer.quad_buffer;
 
 
@@ -287,6 +295,9 @@ void _SBRE_terminate_render_systems(void) {
 
 	free(_SBRE_batch_renderer.quad_buffer);
 	_SBRE_batch_renderer.quad_buffer = NULL;
+
+	free(_SBRE_batch_renderer.texture_slots);
+	_SBRE_batch_renderer.texture_slots = NULL;
 }
 
 
@@ -405,8 +416,6 @@ void _SBRE_initialize_batch_renderer(void) {
 	glVertexAttribPointer(5, 1, GL_FLOAT, GL_FALSE, sizeof(Vertex_Ext), (const void*) offsetof(Vertex_Ext, thickness));
 	glEnableVertexAttribArray(5);
 
-	glBindVertexArray(0);
-
 
 	/* Create and Initialize the EBO */
 
@@ -427,6 +436,14 @@ void _SBRE_initialize_batch_renderer(void) {
 	glGenBuffers(1, &_SBRE_batch_renderer.ebo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _SBRE_batch_renderer.ebo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(text_indices), text_indices, GL_STATIC_DRAW);
+
+
+	/* Initialize the Texture Slots */
+
+	_SBRE_batch_renderer.texture_slots = (uint32_t*) calloc(MAX_TEXTURE_SLOTS, sizeof(uint32_t));
+	_SBRE_batch_renderer.texture_slots[0] = _SBRE_default_texture->texture_id;
+	for (int i = 1; i < MAX_TEXTURE_SLOTS; ++i)
+		_SBRE_batch_renderer.texture_slots[i] = i;
 }
 
 
@@ -584,7 +601,7 @@ void SBRE_draw_quad(Vec2 pos, float width, float height, Color color) {
 
 	/* Default Shader */
 
-	if (_SBRE_active_shader == _SBRE_default_shader || _SBRE_active_shader == _SBRE_default_circle_shader)
+	if (_SBRE_active_shader == _SBRE_default_batch_shader || _SBRE_active_shader == _SBRE_default_shader || _SBRE_active_shader == _SBRE_default_circle_shader)
 		SBRE_use_shader(_SBRE_default_shader);
 
 
@@ -637,7 +654,7 @@ void SBRE_draw_quad_ext(Vec2 pos, float width, float height, float rotation, Col
 
 	/* Default Shader */
 
-	if (_SBRE_active_shader == _SBRE_default_shader || _SBRE_active_shader == _SBRE_default_circle_shader)
+	if (_SBRE_active_shader == _SBRE_default_batch_shader || _SBRE_active_shader == _SBRE_default_shader || _SBRE_active_shader == _SBRE_default_circle_shader)
 		SBRE_use_shader(_SBRE_default_shader);
 
 
@@ -692,7 +709,7 @@ void SBRE_draw_quad_outline(Vec2 pos, float width, float height, float border, C
 
 	/* Default Shader */
 
-	if (_SBRE_active_shader == _SBRE_default_shader || _SBRE_active_shader == _SBRE_default_circle_shader)
+	if (_SBRE_active_shader == _SBRE_default_batch_shader || _SBRE_active_shader == _SBRE_default_shader || _SBRE_active_shader == _SBRE_default_circle_shader)
 		SBRE_use_shader(_SBRE_default_shader);
 
 
@@ -790,7 +807,7 @@ void SBRE_draw_quad_outline_ext(Vec2 pos, float width, float height, float borde
 
 	/* Default Shader */
 
-	if (_SBRE_active_shader == _SBRE_default_shader || _SBRE_active_shader == _SBRE_default_circle_shader)
+	if (_SBRE_active_shader == _SBRE_default_batch_shader || _SBRE_active_shader == _SBRE_default_shader || _SBRE_active_shader == _SBRE_default_circle_shader)
 		SBRE_use_shader(_SBRE_default_shader);
 
 
@@ -886,7 +903,7 @@ void SBRE_draw_circle(Vec2 pos, float radius, Color color) {
 
 	/* Default Shader */
 
-	if (_SBRE_active_shader == _SBRE_default_shader || _SBRE_active_shader == _SBRE_default_circle_shader)
+	if (_SBRE_active_shader == _SBRE_default_batch_shader || _SBRE_active_shader == _SBRE_default_shader || _SBRE_active_shader == _SBRE_default_circle_shader)
 		SBRE_use_shader(_SBRE_default_circle_shader);
 
 
@@ -942,7 +959,7 @@ void SBRE_draw_circle_outline(Vec2 pos, float radius, float border, Color fill_c
 
 	/* Default Shader */
 
-	if (_SBRE_active_shader == _SBRE_default_shader || _SBRE_active_shader == _SBRE_default_circle_shader)
+	if (_SBRE_active_shader == _SBRE_default_batch_shader || _SBRE_active_shader == _SBRE_default_shader || _SBRE_active_shader == _SBRE_default_circle_shader)
 		SBRE_use_shader(_SBRE_default_circle_shader);
 
 
@@ -1029,7 +1046,7 @@ void SBRE_draw_texture(Vec2 pos, Texture* texture, Rectangle* texture_rect) {
 	
 	/* Default Shader */
 
-	if (_SBRE_active_shader == _SBRE_default_shader || _SBRE_active_shader == _SBRE_default_circle_shader)
+	if (_SBRE_active_shader == _SBRE_default_batch_shader || _SBRE_active_shader == _SBRE_default_shader || _SBRE_active_shader == _SBRE_default_circle_shader)
 		SBRE_use_shader(_SBRE_default_shader);
 
 
@@ -1097,7 +1114,7 @@ void SBRE_draw_texture_ext(Vec2 pos, Texture* texture, Rectangle* texture_rect, 
 	
 	/* Default Shader */
 
-	if (_SBRE_active_shader == _SBRE_default_shader || _SBRE_active_shader == _SBRE_default_circle_shader)
+	if (_SBRE_active_shader == _SBRE_default_batch_shader || _SBRE_active_shader == _SBRE_default_shader || _SBRE_active_shader == _SBRE_default_circle_shader)
 		SBRE_use_shader(_SBRE_default_shader);
 
 
@@ -1165,7 +1182,7 @@ void SBRE_draw_text(Vec2 pos, const char* text, Font* font, Color color) {
 
 	/* Default Shader */
 
-	if (_SBRE_active_shader == _SBRE_default_shader || _SBRE_active_shader == _SBRE_default_circle_shader)
+	if (_SBRE_active_shader == _SBRE_default_batch_shader || _SBRE_active_shader == _SBRE_default_shader || _SBRE_active_shader == _SBRE_default_circle_shader)
 		SBRE_use_shader(_SBRE_default_shader);
 
 
@@ -1249,6 +1266,158 @@ void SBRE_draw_text(Vec2 pos, const char* text, Font* font, Color color) {
 
 /* Batch Renderer */
 
-void SBRE_begin_batch() {
+void SBRE_reset_batch_stats(void) {
 
+	_SBRE_batch_renderer.rs_quad_count = 0;
+	_SBRE_batch_renderer.rs_render_count = 0;
+}
+
+
+
+void SBRE_begin_batch(void) {
+
+	if (_SBRE_active_shader == _SBRE_default_batch_shader || _SBRE_active_shader == _SBRE_default_shader || _SBRE_active_shader == _SBRE_default_circle_shader)
+		SBRE_use_shader(_SBRE_default_batch_shader);
+
+
+	/* Send the Samplers */
+	int sampler[16];
+	for (int i = 0; i < 16; ++i)
+		sampler[i] = i;
+	int32_t location = glGetUniformLocation(_SBRE_active_shader, "u_textures");
+	glUniform1iv(location, 16, sampler);
+
+
+	/* Send the default mvp */	
+	Mat4 mvp = _SBRE_calculate_mvp();
+	SBRE_set_uniform_mat4f(_SBRE_active_shader, "u_mvp", mvp);
+
+
+	/* Move the pointer to the start of the buffer */
+	_SBRE_batch_renderer.quad_buffer_ptr = _SBRE_batch_renderer.quad_buffer;
+}
+
+
+
+void SBRE_end_batch(void) {
+
+	GLsizeiptr size = (uint8_t*) _SBRE_batch_renderer.quad_buffer_ptr - (uint8_t*) _SBRE_batch_renderer.quad_buffer;
+	glBindBuffer(GL_ARRAY_BUFFER, _SBRE_batch_renderer.vbo);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, size, _SBRE_batch_renderer.quad_buffer);
+}
+
+
+
+void SBRE_render_batch(bool clear_stats) {
+
+	/* Bind all textures */
+
+	for (int i = 0; i < _SBRE_batch_renderer.texture_index; ++i) {
+		glActiveTexture(GL_TEXTURE0 + i);
+		glBindTexture(GL_TEXTURE_2D, _SBRE_batch_renderer.texture_slots[i]);
+	}
+
+
+	/* Draw the current batch */
+
+	glBindVertexArray(_SBRE_batch_renderer.vao);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _SBRE_batch_renderer.ebo);
+	glDrawElements(GL_TRIANGLES, (int) _SBRE_batch_renderer.index_count, GL_UNSIGNED_INT, NULL);
+
+	_SBRE_batch_renderer.rs_render_count++;
+
+
+	/* Reset the texture index and index count */
+
+	_SBRE_batch_renderer.index_count = 0;
+	_SBRE_batch_renderer.texture_index = 1;
+
+
+	/* Unbind all the textures */
+
+	for (int i = 0; i < _SBRE_batch_renderer.texture_index; ++i) {
+		glActiveTexture(GL_TEXTURE0 + i);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
+	if (clear_stats)
+		SBRE_reset_batch_stats();
+}
+
+
+
+/* Batch Renderer Render Functions */
+
+static void _SBRE_batch_set_vertex_buffer(Vec2 pos, float width, float height, Color color, float index, Rectangle text_coord) {
+
+	Color normalized_color = NORMALIZE_RGBA(color.r, color.g, color.b ,color.a);
+
+
+	_SBRE_batch_renderer.quad_buffer_ptr->pos = (Vec2){ pos.x, pos.y };
+	_SBRE_batch_renderer.quad_buffer_ptr->color = normalized_color;
+	_SBRE_batch_renderer.quad_buffer_ptr->tex_coord = (Vec2){ text_coord.position.x, text_coord.position.y + text_coord.height };
+	_SBRE_batch_renderer.quad_buffer_ptr->index = index;
+	_SBRE_batch_renderer.quad_buffer_ptr->draw_type = DRAW_TYPE_QUAD;
+	_SBRE_batch_renderer.quad_buffer_ptr->thickness = 0;
+	_SBRE_batch_renderer.quad_buffer_ptr++;
+	
+	_SBRE_batch_renderer.quad_buffer_ptr->pos = (Vec2){ pos.x + width, pos.y };
+	_SBRE_batch_renderer.quad_buffer_ptr->color = normalized_color;
+	_SBRE_batch_renderer.quad_buffer_ptr->tex_coord = (Vec2){ text_coord.position.x + text_coord.width, text_coord.position.y + text_coord.height };
+	_SBRE_batch_renderer.quad_buffer_ptr->index = index;
+	_SBRE_batch_renderer.quad_buffer_ptr->draw_type = DRAW_TYPE_QUAD;
+	_SBRE_batch_renderer.quad_buffer_ptr->thickness = 0;
+	_SBRE_batch_renderer.quad_buffer_ptr++;
+
+	_SBRE_batch_renderer.quad_buffer_ptr->pos = (Vec2){ pos.x, pos.y + height};
+	_SBRE_batch_renderer.quad_buffer_ptr->color = normalized_color;
+	_SBRE_batch_renderer.quad_buffer_ptr->tex_coord = (Vec2){ text_coord.position.x, text_coord.position.y };
+	_SBRE_batch_renderer.quad_buffer_ptr->index = index;
+	_SBRE_batch_renderer.quad_buffer_ptr->draw_type = DRAW_TYPE_QUAD;
+	_SBRE_batch_renderer.quad_buffer_ptr->thickness = 0;
+	_SBRE_batch_renderer.quad_buffer_ptr++;
+
+	_SBRE_batch_renderer.quad_buffer_ptr->pos = (Vec2){ pos.x + width, pos.y + height };
+	_SBRE_batch_renderer.quad_buffer_ptr->color = normalized_color;
+	_SBRE_batch_renderer.quad_buffer_ptr->tex_coord = (Vec2){ text_coord.position.x + text_coord.width, text_coord.position.y };
+	_SBRE_batch_renderer.quad_buffer_ptr->index = index;
+	_SBRE_batch_renderer.quad_buffer_ptr->draw_type = DRAW_TYPE_QUAD;
+	_SBRE_batch_renderer.quad_buffer_ptr->thickness = 0;
+	_SBRE_batch_renderer.quad_buffer_ptr++;
+
+
+	_SBRE_batch_renderer.index_count += 6;
+	_SBRE_batch_renderer.rs_quad_count++;
+}
+
+
+
+void SBRE_batch_render_quad(Vec2 pos, float width, float height, Color color) {
+
+	if (_SBRE_batch_renderer.index_count >= MAX_INDEX || _SBRE_batch_renderer.texture_index > MAX_TEXTURE_SLOTS) {
+
+		SBRE_end_batch();
+		SBRE_render_batch(false);
+		SBRE_begin_batch();
+	}
+
+
+	/* Calculate Texture Position */
+
+	Rectangle text_rect = (Rectangle) {
+		.position = (Vec2) { 0.0f, 0.0f },
+		.width 	= 1.0f,
+		.height = 1.0f
+	};
+
+
+	/* Set Vertices */
+
+	_SBRE_batch_set_vertex_buffer(pos, width, height, color, 0, text_rect);
+
+
+	/* Send Vertex Data to Batch Buffer*/
+
+	_SBRE_set_vertex_buffer();
 }
