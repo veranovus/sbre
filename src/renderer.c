@@ -1292,7 +1292,7 @@ void SBRE_begin_batch(void) {
 	Mat4 mvp = _SBRE_calculate_mvp();
 	SBRE_set_uniform_mat4f(_SBRE_active_shader, "u_mvp", mvp);
 
-
+	
 	/* Move the pointer to the start of the buffer */
 	_SBRE_batch_renderer.quad_buffer_ptr = _SBRE_batch_renderer.quad_buffer;
 }
@@ -1340,7 +1340,7 @@ void SBRE_render_batch(bool clear_stats) {
 		glActiveTexture(GL_TEXTURE0 + i);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
-
+	
 	if (clear_stats)
 		SBRE_reset_batch_stats();
 }
@@ -1415,9 +1415,4 @@ void SBRE_batch_render_quad(Vec2 pos, float width, float height, Color color) {
 	/* Set Vertices */
 
 	_SBRE_batch_set_vertex_buffer(pos, width, height, color, 0, text_rect);
-
-
-	/* Send Vertex Data to Batch Buffer*/
-
-	_SBRE_set_vertex_buffer();
 }

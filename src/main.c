@@ -6,9 +6,7 @@
 #define TITLE "SBRE"
 #define VSync 0
 
-/*
- * TODO : Something is causing a real bottleneck in the renderer find it.
- */
+
 
 int main(void) {
 	
@@ -79,9 +77,9 @@ int main(void) {
 		
 		SBRE_begin_batch();
 
-		for (int y = 0; y < 100; ++y) {
+		for (int y = 0; y < 1000; ++y) {
 
-			for (int x = 0; x < 100; ++x) {
+			for (int x = 0; x < 1000; ++x) {
 
 				SBRE_batch_render_quad(SBRE_VEC2(5 + (x * 25), 5 + (y * 25)), 20, 20, SBRE_COLOR(123, 50, 255, 255));
 			}
