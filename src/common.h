@@ -406,6 +406,10 @@ void SBRE_batch_render_quad(Vec2 pos, float width, float height, Color color);
 
 
 
+void SBRE_batch_render_quad_ext(Vec2 pos, float width, float height, float rotation, Color color);
+
+
+
 #ifndef NDEBUG
 /* Debugging */
 

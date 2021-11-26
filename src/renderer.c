@@ -106,6 +106,7 @@ static const uint32_t MAX_INDEX = MAX_QUAD * 6;
 
 
 static Texture* _SBRE_default_texture;
+static float _SBRE_rotation_matrix[4];
 
 
 static uint32_t _SBRE_default_shader;
@@ -1349,7 +1350,7 @@ void SBRE_render_batch(bool clear_stats) {
 
 /* Batch Renderer Render Functions */
 
-static void _SBRE_batch_set_vertex_buffer(Vec2 pos, float width, float height, Color color, float index, Rectangle text_coord) {
+static void _SBRE_batch_set_vertex_buffer(Vec2 pos, float width, float height, Color color, float index, Rectangle text_coord, int draw_type, float thickness) {
 
 	Color normalized_color = NORMALIZE_RGBA(color.r, color.g, color.b ,color.a);
 
@@ -1358,11 +1359,67 @@ static void _SBRE_batch_set_vertex_buffer(Vec2 pos, float width, float height, C
 	_SBRE_batch_renderer.quad_buffer_ptr->color = normalized_color;
 	_SBRE_batch_renderer.quad_buffer_ptr->tex_coord = (Vec2){ text_coord.position.x, text_coord.position.y + text_coord.height };
 	_SBRE_batch_renderer.quad_buffer_ptr->index = index;
+	_SBRE_batch_renderer.quad_buffer_ptr->draw_type = draw_type;
+	_SBRE_batch_renderer.quad_buffer_ptr->thickness = thickness;
+	_SBRE_batch_renderer.quad_buffer_ptr++;
+	
+	_SBRE_batch_renderer.quad_buffer_ptr->pos = (Vec2){ pos.x + width, pos.y };
+	_SBRE_batch_renderer.quad_buffer_ptr->color = normalized_color;
+	_SBRE_batch_renderer.quad_buffer_ptr->tex_coord = (Vec2){ text_coord.position.x + text_coord.width, text_coord.position.y + text_coord.height };
+	_SBRE_batch_renderer.quad_buffer_ptr->index = index;
+	_SBRE_batch_renderer.quad_buffer_ptr->draw_type = draw_type;
+	_SBRE_batch_renderer.quad_buffer_ptr->thickness = thickness;
+	_SBRE_batch_renderer.quad_buffer_ptr++;
+
+	_SBRE_batch_renderer.quad_buffer_ptr->pos = (Vec2){ pos.x, pos.y + height};
+	_SBRE_batch_renderer.quad_buffer_ptr->color = normalized_color;
+	_SBRE_batch_renderer.quad_buffer_ptr->tex_coord = (Vec2){ text_coord.position.x, text_coord.position.y };
+	_SBRE_batch_renderer.quad_buffer_ptr->index = index;
+	_SBRE_batch_renderer.quad_buffer_ptr->draw_type = draw_type;
+	_SBRE_batch_renderer.quad_buffer_ptr->thickness = thickness;
+	_SBRE_batch_renderer.quad_buffer_ptr++;
+
+	_SBRE_batch_renderer.quad_buffer_ptr->pos = (Vec2){ pos.x + width, pos.y + height };
+	_SBRE_batch_renderer.quad_buffer_ptr->color = normalized_color;
+	_SBRE_batch_renderer.quad_buffer_ptr->tex_coord = (Vec2){ text_coord.position.x + text_coord.width, text_coord.position.y };
+	_SBRE_batch_renderer.quad_buffer_ptr->index = index;
+	_SBRE_batch_renderer.quad_buffer_ptr->draw_type = draw_type;
+	_SBRE_batch_renderer.quad_buffer_ptr->thickness = thickness;
+	_SBRE_batch_renderer.quad_buffer_ptr++;
+
+
+	_SBRE_batch_renderer.index_count += 6;
+	_SBRE_batch_renderer.rs_quad_count++;
+}
+
+
+
+static void _SBRE_batch_set_vertex_buffer_rotated(Vec2 pos, float width, float height, Color color, float index, Rectangle text_coord, float rotation) {
+
+	Color normalized_color = NORMALIZE_RGBA(color.r, color.g, color.b ,color.a);
+
+
+	_SBRE_rotation_matrix[0] =  cos(rotation);
+	_SBRE_rotation_matrix[1] = -sin(rotation);
+	_SBRE_rotation_matrix[2] =  sin(rotation);
+	_SBRE_rotation_matrix[3] =  cos(rotation);
+
+	Vec2 ref_pos = SBRE_VEC2(pos.x + width / 2, pos.y + height / 2);
+
+	Vec2 ref_dir = SBRE_VEC2(0, 1);
+	Vec2 rot_direction = SBRE_VEC2(_SBRE_rotation_matrix[0] * ref_dir.x + _SBRE_rotation_matrix[1] * ref_dir.y,
+								   _SBRE_rotation_matrix[2] * ref_dir.x + _SBRE_rotation_matrix[3] * ref_dir.y);
+
+
+	_SBRE_batch_renderer.quad_buffer_ptr->pos = util_add_vec2(util_add_vec2(ref_pos, util_multiply_vec2(rot_direction, -height / 2)), util_multiply_vec2(util_vec2_normal(rot_direction), -width / 2));
+	_SBRE_batch_renderer.quad_buffer_ptr->color = normalized_color;
+	_SBRE_batch_renderer.quad_buffer_ptr->tex_coord = (Vec2){ text_coord.position.x, text_coord.position.y + text_coord.height };
+	_SBRE_batch_renderer.quad_buffer_ptr->index = index;
 	_SBRE_batch_renderer.quad_buffer_ptr->draw_type = DRAW_TYPE_QUAD;
 	_SBRE_batch_renderer.quad_buffer_ptr->thickness = 0;
 	_SBRE_batch_renderer.quad_buffer_ptr++;
 	
-	_SBRE_batch_renderer.quad_buffer_ptr->pos = (Vec2){ pos.x + width, pos.y };
+	_SBRE_batch_renderer.quad_buffer_ptr->pos = util_add_vec2(util_add_vec2(ref_pos, util_multiply_vec2(rot_direction, -height / 2)), util_multiply_vec2(util_vec2_normal(rot_direction),  width / 2));
 	_SBRE_batch_renderer.quad_buffer_ptr->color = normalized_color;
 	_SBRE_batch_renderer.quad_buffer_ptr->tex_coord = (Vec2){ text_coord.position.x + text_coord.width, text_coord.position.y + text_coord.height };
 	_SBRE_batch_renderer.quad_buffer_ptr->index = index;
@@ -1370,7 +1427,7 @@ static void _SBRE_batch_set_vertex_buffer(Vec2 pos, float width, float height, C
 	_SBRE_batch_renderer.quad_buffer_ptr->thickness = 0;
 	_SBRE_batch_renderer.quad_buffer_ptr++;
 
-	_SBRE_batch_renderer.quad_buffer_ptr->pos = (Vec2){ pos.x, pos.y + height};
+	_SBRE_batch_renderer.quad_buffer_ptr->pos = util_add_vec2(util_add_vec2(ref_pos, util_multiply_vec2(rot_direction,  height / 2)), util_multiply_vec2(util_vec2_normal(rot_direction), -width / 2));	
 	_SBRE_batch_renderer.quad_buffer_ptr->color = normalized_color;
 	_SBRE_batch_renderer.quad_buffer_ptr->tex_coord = (Vec2){ text_coord.position.x, text_coord.position.y };
 	_SBRE_batch_renderer.quad_buffer_ptr->index = index;
@@ -1378,13 +1435,13 @@ static void _SBRE_batch_set_vertex_buffer(Vec2 pos, float width, float height, C
 	_SBRE_batch_renderer.quad_buffer_ptr->thickness = 0;
 	_SBRE_batch_renderer.quad_buffer_ptr++;
 
-	_SBRE_batch_renderer.quad_buffer_ptr->pos = (Vec2){ pos.x + width, pos.y + height };
+	_SBRE_batch_renderer.quad_buffer_ptr->pos = util_add_vec2(util_add_vec2(ref_pos, util_multiply_vec2(rot_direction,  height / 2)), util_multiply_vec2(util_vec2_normal(rot_direction),  width / 2));
 	_SBRE_batch_renderer.quad_buffer_ptr->color = normalized_color;
 	_SBRE_batch_renderer.quad_buffer_ptr->tex_coord = (Vec2){ text_coord.position.x + text_coord.width, text_coord.position.y };
 	_SBRE_batch_renderer.quad_buffer_ptr->index = index;
 	_SBRE_batch_renderer.quad_buffer_ptr->draw_type = DRAW_TYPE_QUAD;
 	_SBRE_batch_renderer.quad_buffer_ptr->thickness = 0;
-	_SBRE_batch_renderer.quad_buffer_ptr++;
+	_SBRE_batch_renderer.quad_buffer_ptr++;	
 
 
 	_SBRE_batch_renderer.index_count += 6;
@@ -1414,5 +1471,31 @@ void SBRE_batch_render_quad(Vec2 pos, float width, float height, Color color) {
 
 	/* Set Vertices */
 
-	_SBRE_batch_set_vertex_buffer(pos, width, height, color, 0, text_rect);
+	_SBRE_batch_set_vertex_buffer(pos, width, height, color, 0, text_rect, DRAW_TYPE_CIRCLE, 0.1);
+}
+
+
+
+void SBRE_batch_render_quad_ext(Vec2 pos, float width, float height, float rotation, Color color) {
+
+	if (_SBRE_batch_renderer.index_count >= MAX_INDEX || _SBRE_batch_renderer.texture_index > MAX_TEXTURE_SLOTS) {
+
+		SBRE_end_batch();
+		SBRE_render_batch(false);
+		SBRE_begin_batch();
+	}
+
+
+	/* Calculate Texture Position */
+
+	Rectangle text_rect = (Rectangle) {
+		.position = (Vec2) { 0.0f, 0.0f },
+		.width 	= 1.0f,
+		.height = 1.0f
+	};
+
+
+	/* Set Vertices */
+
+	_SBRE_batch_set_vertex_buffer_rotated(pos, width, height, color, 0, text_rect, rotation);
 }

@@ -30,6 +30,8 @@ int main(void) {
 
 
 	float rotation = 30;
+	Vec2 move_pos = SBRE_VEC2(-250, -250);
+	float increase = 0.005;
 
 
 	while(!SBRE_window_should_close()) {
@@ -57,7 +59,8 @@ int main(void) {
 		SBRE_set_clear_color((Color){ 12.3, 2.5, 25, 255 });
 		SBRE_clear();
 
-		/*		
+
+		/*
 		SBRE_draw_quad(SBRE_VEC2(50.0f, 50.0f), 50.0f, 50.0f, SBRE_COLOR(123, 50, 255, 255));
 
 		SBRE_draw_quad_outline_ext(pos, 50.0f,50.0f, 2.0f, rotation, SBRE_COLOR(123, 50, 255, 255), SBRE_WHITE);
@@ -74,14 +77,23 @@ int main(void) {
 		SBRE_draw_text(SBRE_VEC2(50.0f, 100.0f), "Phyton huh? C is way better.", font, SBRE_GREEN);
 		*/
 		
+
+		if (move_pos.x >= -50)
+			increase = -0.005;
+		else if (move_pos.x <= -250)
+			increase =  0.005;
+		move_pos.x += increase;
+		move_pos.y += increase;
 		
+
 		SBRE_begin_batch();
 
-		for (int y = 0; y < 1000; ++y) {
+		for (int y = 0; y < 100; ++y) {
 
-			for (int x = 0; x < 1000; ++x) {
+			for (int x = 0; x < 100; ++x) {
 
-				SBRE_batch_render_quad(SBRE_VEC2(5 + (x * 25), 5 + (y * 25)), 20, 20, SBRE_COLOR(123, 50, 255, 255));
+				//SBRE_batch_render_quad_ext(SBRE_VEC2(5 + (x * 25), 5 + (y * 25)), 20, 20, rotation, SBRE_COLOR(123, 50, 255, 255));
+				SBRE_batch_render_quad(SBRE_VEC2(move_pos.x + (x * 25), move_pos.y + (y * 25)), 20, 20, SBRE_COLOR(123, 50, 255, 255));
 			}
 		}
 

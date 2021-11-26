@@ -4,11 +4,11 @@
  You can easilly write and use your custom shaders in SBRE. There are individual and batched rendering
  options availible. There is no 3D support currently and there won't be in the future.
 
- > Current version 0.05c
+ > Current version 0.06
 
 ## TODO
 
-- Implement Batch Rendering
+- Batch Rendering For All Different Draw Functions
 
 ## Capabilities
 
@@ -17,7 +17,8 @@
 - Rendering Truetype Font
 - Full Support for Custom Shaders
 - Rotated Primitive and Textures Rendering
+- Individual and Batch Rendering Options
 
 ## Changes
 
-- Fixed Performance Related Bug
+- Proper Batch Rendering Implemented
