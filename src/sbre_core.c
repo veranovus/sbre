@@ -274,6 +274,16 @@ Texture* SBRE_load_texture(const char* filepath, uint32_t filter) {
 
 
 
+void SBRE_free_texture(Texture* texture) {
+
+	glDeleteTextures(1, &texture->texture_id);
+	free(texture);
+	
+	texture = NULL;
+}
+
+
+
 void SBRE_load_texture_to_texture(Texture* texture, const char* filepath, int32_t offset_x, int32_t offset_y) {
 
 	FILE* fp = NULL;

@@ -178,6 +178,7 @@ Font* SBRE_create_font(const char* font_path, uint32_t font_size, uint32_t filte
 
 void SBRE_free_font(Font* font) {
 
+    glDeleteTextures(1, &font->font_atlas->texture_id);
     free(font->font_atlas);
     free(font->_characters);
     free(font);

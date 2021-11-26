@@ -31,6 +31,8 @@
 
 #define SBRE_DEFAULT_SHADER  1
 
+#define SBRE_DEFAULT_BATCH_SHADER  3
+
 #define NORMALIZE_RGBA(r, g, b, a) ((Color) { r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f })
 
 
@@ -95,6 +97,15 @@ extern const char* _SBRE_fragment_shader_source;
 
 
 extern const char* _SBRE_circle_fragment_shader_source;
+
+
+
+extern const char* _SBRE_batch_vertex_shader_source;
+
+
+
+extern const char* _SBRE_batch_fragment_shader_source;
+
 
 
 /* Typedefs */
@@ -243,6 +254,10 @@ Texture* SBRE_load_texture(const char* filepath, uint32_t filter);
 
 
 
+void SBRE_free_texture(Texture* texture);
+
+
+
 void SBRE_load_texture_to_texture(Texture* texture, const char* filepath, int32_t offset_x, int32_t offset_y);
 
 
@@ -318,6 +333,14 @@ void _SBRE_init_render_systems(void);
 
 
 void _SBRE_terminate_render_systems(void);
+
+
+
+void _SBRE_initalize_renderer(void);
+
+
+
+void _SBRE_initialize_batch_renderer(void);
 
 
 

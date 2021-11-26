@@ -27,6 +27,19 @@ typedef struct Vertex {
 
 
 
+typedef struct Vertex_Ext {
+
+	Vec2 pos;
+	Color color;
+	Vec2 tex_coord;
+	float index;
+	float draw_type;
+	float thickness;
+
+} Vertex_Ext;
+
+
+
 typedef struct Renderer {
 	
 	uint32_t vao;
@@ -86,8 +99,11 @@ static const uint32_t MAX_INDEX = MAX_QUAD * 6;
 
 static Texture* _SBRE_default_texture;
 
+
 static uint32_t _SBRE_default_shader;
 static uint32_t _SBRE_default_circle_shader;
+
+static uint32_t _SBRE_default_batch_shader;
 
 
 int32_t MAX_TEXTURE_SLOTS;
@@ -121,11 +137,21 @@ void _SBRE_init_render_systems(void) {
 		return;
 	}
 
+
 	_SBRE_default_circle_shader = _SBRE_create_shader_from_string(_SBRE_vertex_shader_source, _SBRE_circle_fragment_shader_source);
 
 	if (!(_SBRE_default_circle_shader)) {
 
 		printf("[SBRE Error][Default circle shader could not compile.]\n");
+		return;
+	}
+
+
+	_SBRE_default_batch_shader = _SBRE_create_shader_from_string(_SBRE_batch_vertex_shader_source, _SBRE_batch_fragment_shader_source);
+
+	if (!(_SBRE_default_batch_shader)) {
+
+		printf("[SBRE Error][Default batch shader could not compile.]\n");
 		return;
 	}
 
@@ -167,7 +193,7 @@ void _SBRE_init_render_systems(void) {
 	glBindTexture(GL_TEXTURE_2D, 0);
 	
 
-	/* Initialize Renderers */
+	/* Create Renderer */
 	
 	_SBRE_renderer = (Renderer) {
 		
@@ -195,6 +221,11 @@ void _SBRE_init_render_systems(void) {
 	_SBRE_renderer.text_buffer_ptr = _SBRE_renderer.text_buffer;
 
 
+	_SBRE_initalize_renderer();	
+
+
+	/* Create Batch Renderer */
+
 	_SBRE_batch_renderer = (BatchRenderer) {
 		
 		.vao = 0,
@@ -213,6 +244,54 @@ void _SBRE_init_render_systems(void) {
 		.rs_quad_count = 0,
 	};
 
+	_SBRE_batch_renderer.quad_buffer = (Vertex*) calloc(MAX_VERTEX, sizeof(Vertex));
+	_SBRE_batch_renderer.quad_buffer_ptr = _SBRE_batch_renderer.quad_buffer;
+
+
+	_SBRE_initialize_batch_renderer();
+}
+
+
+
+void _SBRE_terminate_render_systems(void) {
+
+	/* Free the default texture */
+
+	glDeleteTextures(1, &_SBRE_default_texture->texture_id);
+	free(_SBRE_default_texture);
+	_SBRE_default_texture = NULL;
+
+
+	/* Cleanup the renderer */
+
+	glDeleteVertexArrays(1, &_SBRE_renderer.vao);
+	glDeleteBuffers(1, &_SBRE_renderer.vbo);
+	glDeleteBuffers(1, &_SBRE_renderer.ebo);
+
+	glDeleteVertexArrays(1, &_SBRE_renderer.text_vao);
+	glDeleteBuffers(1, &_SBRE_renderer.text_vbo);
+	glDeleteBuffers(1, &_SBRE_renderer.text_ebo);
+
+	free(_SBRE_renderer.quad_buffer);
+	_SBRE_renderer.quad_buffer = NULL;
+
+	free(_SBRE_renderer.text_buffer);
+	_SBRE_renderer.text_buffer = NULL;
+
+
+	/* Cleanup the Batch Renderer */
+
+	glDeleteVertexArrays(1, &_SBRE_batch_renderer.vao);
+	glDeleteBuffers(1, &_SBRE_batch_renderer.vbo);
+	glDeleteBuffers(1, &_SBRE_batch_renderer.ebo);
+
+	free(_SBRE_batch_renderer.quad_buffer);
+	_SBRE_batch_renderer.quad_buffer = NULL;
+}
+
+
+
+void _SBRE_initalize_renderer(void) {
 
 	/* Create and Initialize VAO and VBO */
 
@@ -296,18 +375,58 @@ void _SBRE_init_render_systems(void) {
 
 
 
-void _SBRE_terminate_render_systems(void) {
-	
-	glDeleteVertexArrays(1, &_SBRE_renderer.vao);
-	glDeleteBuffers(1, &_SBRE_renderer.vbo);
-	glDeleteBuffers(1, &_SBRE_renderer.ebo);
+void _SBRE_initialize_batch_renderer(void) {
 
-	glDeleteTextures(1, &_SBRE_default_texture->texture_id);
-	free(_SBRE_default_texture);
-	_SBRE_default_texture = NULL;
+	/* Create and Initialize VAO and VBO */
 
-	free(_SBRE_renderer.quad_buffer);
-	_SBRE_renderer.quad_buffer = NULL;
+	glGenVertexArrays(1, &_SBRE_batch_renderer.vao);
+	glBindVertexArray(_SBRE_batch_renderer.vao);
+
+
+	glGenBuffers(1, &_SBRE_batch_renderer.vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, _SBRE_batch_renderer.vbo);
+	glBufferData(GL_ARRAY_BUFFER, MAX_VERTEX * sizeof(Vertex_Ext), NULL, GL_DYNAMIC_DRAW);
+
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex_Ext), (const void*) offsetof(Vertex_Ext, pos));
+	glEnableVertexAttribArray(0);
+
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex_Ext), (const void*) offsetof(Vertex_Ext, color));
+	glEnableVertexAttribArray(1);
+
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex_Ext), (const void*) offsetof(Vertex_Ext, tex_coord));
+	glEnableVertexAttribArray(2);
+
+	glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(Vertex_Ext), (const void*) offsetof(Vertex_Ext, index));
+	glEnableVertexAttribArray(3);
+
+	glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, sizeof(Vertex_Ext), (const void*) offsetof(Vertex_Ext, draw_type));
+	glEnableVertexAttribArray(4);
+
+	glVertexAttribPointer(5, 1, GL_FLOAT, GL_FALSE, sizeof(Vertex_Ext), (const void*) offsetof(Vertex_Ext, thickness));
+	glEnableVertexAttribArray(5);
+
+	glBindVertexArray(0);
+
+
+	/* Create and Initialize the EBO */
+
+	unsigned int text_indices[MAX_INDEX];
+	unsigned int offset = 0;
+	for (uint32_t i = 0; i < MAX_INDEX; i += 6) {
+
+		text_indices[0 + i] = 0 + offset;
+        text_indices[1 + i] = 1 + offset;
+        text_indices[2 + i] = 2 + offset;
+        text_indices[3 + i] = 2 + offset;
+        text_indices[4 + i] = 3 + offset;
+        text_indices[5 + i] = 1 + offset;
+
+        offset += 4;
+	}
+
+	glGenBuffers(1, &_SBRE_batch_renderer.ebo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _SBRE_batch_renderer.ebo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(text_indices), text_indices, GL_STATIC_DRAW);
 }
 
 
@@ -1130,3 +1249,6 @@ void SBRE_draw_text(Vec2 pos, const char* text, Font* font, Color color) {
 
 /* Batch Renderer */
 
+void SBRE_begin_batch() {
+
+}

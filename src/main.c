@@ -15,6 +15,7 @@ int main(void) {
 
 
 	double delta_time;
+	char fps_text[12];
 
 
 	Vec2 pos = SBRE_VEC2(0, 0);
@@ -28,7 +29,7 @@ int main(void) {
 	t->height = 64;
 
 
-	float rotation = 30;	
+	float rotation = 30;
 
 
 	while(!SBRE_window_should_close()) {
@@ -37,6 +38,8 @@ int main(void) {
 		SBRE_calculate_fps();
 
 		delta_time = SBRE_delta_time();
+		uint32_t fps = SBRE_fps();
+		snprintf(fps_text, 12, "FPS : %d", fps);
 
 		rotation += 0.005;
 
@@ -51,13 +54,13 @@ int main(void) {
 			pos.y += speed * delta_time;
 
 
-		SBRE_set_clear_color((Color){ 67.5, 25, 122.5, 255 });
+		SBRE_set_clear_color((Color){ 12.3, 2.5, 25, 255 });
 		SBRE_clear();
 
 		
 		SBRE_draw_quad(SBRE_VEC2(50.0f, 50.0f), 50.0f, 50.0f, SBRE_COLOR(123, 50, 255, 255));
 
-		SBRE_draw_quad_outline_ext(pos, 50.0f, 50.0f, 2.0f, rotation, SBRE_COLOR(123, 50, 255, 255), SBRE_WHITE);
+		SBRE_draw_quad_outline_ext(pos, 50.0f,50.0f, 2.0f, rotation, SBRE_COLOR(123, 50, 255, 255), SBRE_WHITE);
 
 		SBRE_draw_circle(SBRE_VEC2(200.0f, 200.0f), 30.0f, SBRE_WHITE);
 
@@ -70,6 +73,8 @@ int main(void) {
 
 		SBRE_draw_text(SBRE_VEC2(50.0f, 100.0f), "Phyton huh? C is way better.", font, SBRE_GREEN);
 
+		SBRE_draw_text(SBRE_VEC2(0, 0), fps_text, font, SBRE_WHITE);
+
 
 		SBRE_display();
 		SBRE_poll_events();
@@ -78,6 +83,7 @@ int main(void) {
 
 	/* Cleanup */
 	SBRE_free_font(font);
+	SBRE_free_texture(t);
 
 
 	SBRE_terminate();

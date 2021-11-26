@@ -18,6 +18,8 @@
 /* SBRE's default shaders id, use this to activate default shader */
 #define SBRE_DEFAULT_SHADER  1
 
+#define SBRE_DEFAULT_BATCH_SHADER  3
+
 
 
 /* Colors */
@@ -334,6 +336,10 @@ bool SBRE_get_key_release(int key_code);
 /* Texture */
 
 Texture* SBRE_load_texture(const char* filepath, uint32_t filter);
+
+
+
+void SBRE_free_texture(Texture* texture);
 
 
 
