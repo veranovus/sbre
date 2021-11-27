@@ -20,6 +20,11 @@
 
 #define SBRE_DEFAULT_BATCH_SHADER  3
 
+/* Max number of quads that renderer can draw in a single drawcall, 
+ * after this number is exceeded another draw call initiated. Changing 
+ * this number won't change the max number of quads can be drawn in a single call */
+#define MAX_BATCHED_QUAD 10000
+
 
 
 /* Colors */
@@ -491,8 +496,20 @@ void SBRE_batch_render_quad_ext(Vec2 pos, float width, float height, float rotat
 
 
 
+void SBRE_batch_render_circle(Vec2 pos, float radius, Color color);
+
+
+
+void SBRE_batch_render_circle_outline(Vec2 pos, float radius, float border, Color fill_color, Color border_color);
+
+
+
 void SBRE_batch_render_texture(Vec2 pos, Texture* texture, Rectangle* texture_rect);
 
 
 
 void SBRE_batch_render_texture_ext(Vec2 pos, Texture* texture, Rectangle* texture_rect, float rotation);
+
+
+
+void SBRE_batch_render_text(Vec2 pos, const char* text, Font* font, Color color);

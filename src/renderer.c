@@ -1502,7 +1502,59 @@ void SBRE_batch_render_quad_ext(Vec2 pos, float width, float height, float rotat
 
 
 
-//void SBRE_b
+void SBRE_batch_render_circle(Vec2 pos, float radius, Color color) {
+
+	if (_SBRE_batch_renderer.index_count >= MAX_INDEX || _SBRE_batch_renderer.texture_index > MAX_TEXTURE_SLOTS) {
+
+		SBRE_end_batch();
+		SBRE_render_batch(false);
+		SBRE_begin_batch();
+	}
+
+
+	/* Calculate Texture Position */
+
+	Rectangle text_rect = (Rectangle) {
+		.position = (Vec2) { 0.0f, 0.0f },
+		.width 	= 1.0f,
+		.height = 1.0f
+	};
+
+
+	/* Set Vertices */
+
+	_SBRE_batch_set_vertex_buffer(pos, radius * 2, radius * 2, color, 0, text_rect, DRAW_TYPE_CIRCLE, 1);
+}
+
+
+
+void SBRE_batch_render_circle_outline(Vec2 pos, float radius, float border, Color fill_color, Color border_color) {
+
+	if (_SBRE_batch_renderer.index_count >= MAX_INDEX || _SBRE_batch_renderer.texture_index > MAX_TEXTURE_SLOTS) {
+
+		SBRE_end_batch();
+		SBRE_render_batch(false);
+		SBRE_begin_batch();
+	}
+
+
+	/* Calculate Texture Position */
+
+	Rectangle text_rect = (Rectangle) {
+		.position = (Vec2) { 0.0f, 0.0f },
+		.width 	= 1.0f,
+		.height = 1.0f
+	};
+
+
+	/* Set Vertices */
+
+	/* Fill */
+	_SBRE_batch_set_vertex_buffer(pos, radius * 2, radius * 2, fill_color, 0, text_rect, DRAW_TYPE_CIRCLE, 1);
+
+	/* Border */
+	_SBRE_batch_set_vertex_buffer(pos, radius * 2, radius * 2, border_color, 0, text_rect, DRAW_TYPE_CIRCLE, border);
+}
 
 
 
@@ -1620,4 +1672,72 @@ void SBRE_batch_render_texture_ext(Vec2 pos, Texture* texture, Rectangle* textur
 	/* Set Vertices */
 
 	_SBRE_batch_set_vertex_buffer_rotated(pos, texture->width, texture->height, texture->color, texture_index, text_rect, rotation);
+}
+
+
+
+void SBRE_batch_render_text(Vec2 pos, const char* text, Font* font, Color color) {
+
+	if (_SBRE_batch_renderer.index_count >= MAX_INDEX || _SBRE_batch_renderer.texture_index > MAX_TEXTURE_SLOTS) {
+
+		SBRE_end_batch();
+		SBRE_render_batch(false);
+		SBRE_begin_batch();
+	}
+
+
+	/* Find and set the texture id */
+
+	float texture_index = 0.0f;
+    
+    for (int i = 1; i < _SBRE_batch_renderer.texture_index; ++i) {
+
+        if (_SBRE_batch_renderer.texture_slots[i] == font->font_atlas->texture_id) {
+            texture_index = (float)i;
+            break;
+        }
+    }
+
+	if (texture_index == 0.0f) {
+
+        texture_index = (float) _SBRE_batch_renderer.texture_index;
+        _SBRE_batch_renderer.texture_slots[_SBRE_batch_renderer.texture_index] = font->font_atlas->texture_id;
+        _SBRE_batch_renderer.texture_index++;
+    }
+
+
+	/* Send the each character */
+
+	_SBRE_renderer.text_buffer_ptr = _SBRE_renderer.text_buffer;
+	Vec2 crnt_char_pos = pos;
+
+	uint32_t text_len = strlen(text);
+	for (int i = 0; i < text_len; ++i) {
+		
+		SBRE_Character crnt_char = font->_characters[text[i]];
+
+		Rectangle text_coord = (Rectangle) {
+			.position = (Vec2) { crnt_char.render_offset.x / font->font_atlas->initial_width, crnt_char.render_offset.y / font->font_atlas->initial_height},
+			.width 	= crnt_char.size.x / font->font_atlas->initial_width,
+			.height = crnt_char.size.y / font->font_atlas->initial_height
+		};
+		
+
+		Vec2 char_pos = SBRE_VEC2(
+			crnt_char_pos.x + crnt_char.bearing.x,
+			crnt_char_pos.y + (font->biggest_char.y - crnt_char.size.y) + (crnt_char.size.y - crnt_char.bearing.y)
+		);
+
+
+		_SBRE_batch_set_vertex_buffer(char_pos, crnt_char.size.x, crnt_char.size.y, color, texture_index, text_coord, DRAW_TYPE_TEXT, 0);
+		crnt_char_pos.x = char_pos.x + (crnt_char.advance >> 6); /* NOTE : Bitshift the value by 6 to get value in pixels */
+
+		
+		if (_SBRE_batch_renderer.index_count >= MAX_INDEX || _SBRE_batch_renderer.texture_index > MAX_TEXTURE_SLOTS) {
+
+			SBRE_end_batch();
+			SBRE_render_batch(false);
+			SBRE_begin_batch();
+		}
+	}
 }
