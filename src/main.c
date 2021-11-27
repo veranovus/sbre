@@ -76,8 +76,8 @@ int main(void) {
 
 				//SBRE_batch_render_quad_ext(SBRE_VEC2(5 + (x * 25), 5 + (y * 25)), 20, 20, rotation, SBRE_COLOR(123, 50, 255, 255));
 				//SBRE_batch_render_quad(SBRE_VEC2(move_pos.x + (x * 25), move_pos.y + (y * 25)), 20, 20, SBRE_COLOR(123, 50, 255, 255));
-				SBRE_bath_render_texture(SBRE_VEC2(move_pos.x + (x * 70), move_pos.y + (y * 70)), t, NULL);
-				//SBRE_bath_render_texture_ext(SBRE_VEC2(move_pos.x + (x * 70), move_pos.y + (y * 70)), t, NULL, rotation);
+				SBRE_batch_render_texture(SBRE_VEC2(move_pos.x + (x * 70), move_pos.y + (y * 70)), t, NULL);
+				//SBRE_bacth_render_texture_ext(SBRE_VEC2(move_pos.x + (x * 70), move_pos.y + (y * 70)), t, NULL, rotation);
 			}
 		}
 
