@@ -496,6 +496,10 @@ void SBRE_batch_render_quad_ext(Vec2 pos, float width, float height, float rotat
 
 
 
+void SBRE_batch_render_line(Vec2 start, Vec2 end, float width, Color color);
+
+
+
 void SBRE_batch_render_circle(Vec2 pos, float radius, Color color);
 
 

@@ -171,7 +171,7 @@ bool SBRE_init(int SCREEN_WIDTH, int SCREEN_HEIGHT, const char* TITLE, int vsync
 	};
 
 	_SBRE_set_projection_marix(mvp);
-	
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	return true;
 }
 

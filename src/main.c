@@ -76,7 +76,7 @@ int main(void) {
 
 				//SBRE_batch_render_quad_ext(SBRE_VEC2(5 + (x * 25), 5 + (y * 25)), 20, 20, rotation, SBRE_COLOR(123, 50, 255, 255));
 				//SBRE_batch_render_quad(SBRE_VEC2(move_pos.x + (x * 25), move_pos.y + (y * 25)), 20, 20, SBRE_COLOR(123, 50, 255, 255));
-				SBRE_batch_render_texture(SBRE_VEC2(move_pos.x + (x * 70), move_pos.y + (y * 70)), t, NULL);
+				//SBRE_batch_render_texture(SBRE_VEC2(move_pos.x + (x * 70), move_pos.y + (y * 70)), t, NULL);
 				//SBRE_bacth_render_texture_ext(SBRE_VEC2(move_pos.x + (x * 70), move_pos.y + (y * 70)), t, NULL, rotation);
 				//SBRE_batch_render_circle(SBRE_VEC2(move_pos.x + (x * 25), move_pos.y + (y * 25)), 10, SBRE_COLOR(123, 50, 255, 255));
 				//SBRE_batch_render_circle_outline(SBRE_VEC2(move_pos.x + (x * 25), move_pos.y + (y * 25)), 10, 0.1f, SBRE_COLOR(123, 50, 255, 255), SBRE_WHITE);
@@ -85,6 +85,7 @@ int main(void) {
 
 
 		//SBRE_batch_render_text(SBRE_VEC2(0, 0), fps_text, font, SBRE_WHITE);
+		SBRE_batch_render_line(SBRE_VEC2(780, 500), SBRE_VEC2(50, 100), 1, SBRE_WHITE);
 
 
 		SBRE_end_batch();
