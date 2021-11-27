@@ -58,24 +58,6 @@ int main(void) {
 
 		SBRE_set_clear_color((Color){ 12.3, 2.5, 25, 255 });
 		SBRE_clear();
-
-
-		/*
-		SBRE_draw_quad(SBRE_VEC2(50.0f, 50.0f), 50.0f, 50.0f, SBRE_COLOR(123, 50, 255, 255));
-
-		SBRE_draw_quad_outline_ext(pos, 50.0f,50.0f, 2.0f, rotation, SBRE_COLOR(123, 50, 255, 255), SBRE_WHITE);
-
-		SBRE_draw_circle(SBRE_VEC2(200.0f, 200.0f), 30.0f, SBRE_WHITE);
-
-		SBRE_draw_circle_outline(SBRE_VEC2(300.0f, 200.0f), 30.0f, 0.1f, SBRE_RED, SBRE_WHITE);
-
-
-		SBRE_draw_text(SBRE_VEC2(50.0f, 50.0f), "Hello text!", font, SBRE_WHITE);
-
-		SBRE_draw_texture_ext(SBRE_VEC2(100.0f, 350.0f), t, NULL, -rotation);
-
-		SBRE_draw_text(SBRE_VEC2(50.0f, 100.0f), "Phyton huh? C is way better.", font, SBRE_GREEN);
-		*/
 		
 
 		if (move_pos.x >= -50)
@@ -93,9 +75,12 @@ int main(void) {
 			for (int x = 0; x < 100; ++x) {
 
 				//SBRE_batch_render_quad_ext(SBRE_VEC2(5 + (x * 25), 5 + (y * 25)), 20, 20, rotation, SBRE_COLOR(123, 50, 255, 255));
-				SBRE_batch_render_quad(SBRE_VEC2(move_pos.x + (x * 25), move_pos.y + (y * 25)), 20, 20, SBRE_COLOR(123, 50, 255, 255));
+				//SBRE_batch_render_quad(SBRE_VEC2(move_pos.x + (x * 25), move_pos.y + (y * 25)), 20, 20, SBRE_COLOR(123, 50, 255, 255));
+				SBRE_bath_render_texture(SBRE_VEC2(move_pos.x + (x * 70), move_pos.y + (y * 70)), t, NULL);
+				//SBRE_bath_render_texture_ext(SBRE_VEC2(move_pos.x + (x * 70), move_pos.y + (y * 70)), t, NULL, rotation);
 			}
 		}
+
 
 		SBRE_end_batch();
 		SBRE_render_batch(true);

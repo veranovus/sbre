@@ -488,3 +488,11 @@ void SBRE_batch_render_quad(Vec2 pos, float width, float height, Color color);
 
 
 void SBRE_batch_render_quad_ext(Vec2 pos, float width, float height, float rotation, Color color);
+
+
+
+void SBRE_bath_render_texture(Vec2 pos, Texture* texture, Rectangle* texture_rect);
+
+
+
+void SBRE_bath_render_texture_ext(Vec2 pos, Texture* texture, Rectangle* texture_rect, float rotation);
