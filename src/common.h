@@ -350,6 +350,10 @@ void _SBRE_initialize_batch_renderer(void);
 
 /* Individual Render Functions */
 
+void SBRE_draw_line(Vec2 start, Vec2 end, float width, Color color);
+
+
+
 void SBRE_draw_quad(Vec2 pos, float width, float height, Color color);
 
 
@@ -406,11 +410,23 @@ void SBRE_render_batch(bool clear_stats);
 
 /* Batch Renderer Render Functions */
 
+void SBRE_batch_render_line(Vec2 start, Vec2 end, float width, Color color);
+
+
+
 void SBRE_batch_render_quad(Vec2 pos, float width, float height, Color color);
 
 
 
 void SBRE_batch_render_quad_ext(Vec2 pos, float width, float height, float rotation, Color color);
+
+
+
+void SBRE_batch_render_quad_outline(Vec2 pos, float width, float height, float border, Color quad_color, Color border_color);
+
+
+
+void SBRE_batch_render_quad_outline_ext(Vec2 pos, float width, float height, float border, float rotation, Color quad_color, Color border_color);
 
 
 

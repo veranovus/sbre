@@ -4,7 +4,7 @@
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
 #define TITLE "SBRE"
-#define VSync 0
+#define VSync 1
 
 
 
@@ -30,8 +30,6 @@ int main(void) {
 
 
 	float rotation = 30;
-	Vec2 move_pos = SBRE_VEC2(-250, -250);
-	float increase = 0.005;
 
 
 	while(!SBRE_window_should_close()) {
@@ -58,34 +56,16 @@ int main(void) {
 
 		SBRE_set_clear_color((Color){ 12.3, 2.5, 25, 255 });
 		SBRE_clear();
-		
 
-		if (move_pos.x >= -50)
-			increase = -0.005;
-		else if (move_pos.x <= -250)
-			increase =  0.005;
-		move_pos.x += increase;
-		move_pos.y += increase;
-		
 
 		SBRE_begin_batch();
 
-		for (int y = 0; y < 100; ++y) {
-
-			for (int x = 0; x < 100; ++x) {
-
-				//SBRE_batch_render_quad_ext(SBRE_VEC2(5 + (x * 25), 5 + (y * 25)), 20, 20, rotation, SBRE_COLOR(123, 50, 255, 255));
-				//SBRE_batch_render_quad(SBRE_VEC2(move_pos.x + (x * 25), move_pos.y + (y * 25)), 20, 20, SBRE_COLOR(123, 50, 255, 255));
-				//SBRE_batch_render_texture(SBRE_VEC2(move_pos.x + (x * 70), move_pos.y + (y * 70)), t, NULL);
-				//SBRE_bacth_render_texture_ext(SBRE_VEC2(move_pos.x + (x * 70), move_pos.y + (y * 70)), t, NULL, rotation);
-				//SBRE_batch_render_circle(SBRE_VEC2(move_pos.x + (x * 25), move_pos.y + (y * 25)), 10, SBRE_COLOR(123, 50, 255, 255));
-				//SBRE_batch_render_circle_outline(SBRE_VEC2(move_pos.x + (x * 25), move_pos.y + (y * 25)), 10, 0.1f, SBRE_COLOR(123, 50, 255, 255), SBRE_WHITE);
-			}
-		}
-
-
-		//SBRE_batch_render_text(SBRE_VEC2(0, 0), fps_text, font, SBRE_WHITE);
 		SBRE_batch_render_line(SBRE_VEC2(780, 500), SBRE_VEC2(50, 100), 1, SBRE_WHITE);
+
+		SBRE_batch_render_quad_outline(SBRE_VEC2(150, 150), 50, 50, 2, SBRE_RED, SBRE_WHITE);
+		
+
+		SBRE_batch_render_quad_outline_ext(SBRE_VEC2(200, 150), 50, 50, 2, rotation, SBRE_RED, SBRE_WHITE);
 
 
 		SBRE_end_batch();

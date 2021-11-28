@@ -1,21 +1,20 @@
 # SBRE
 
  SBRE is a 2D Simple Batch Rendering Engine written in C99. Its focused arround speed, and flexibility. 
- You can easilly write and use your custom shaders in SBRE. There are individual and batched rendering
- options availible. There is no 3D support currently and there won't be in the future.
+ You can easilly write and use your custom shaders in SBRE. There are batched and non-batched rendering
+ options availible. There is no 3D support currently.
 
- > Current version 0.07b
+ > Current version 0.08
 
 ## Capabilities
 
+- Keyboard and Mouse Input
 - Rendering Primitive Shapes
 - Rendering Texture and Texture Atlas
 - Rendering Truetype Font
 - Full Support for Custom Shaders
-- Rotated Primitive and Textures Rendering
-- Individual and Batch Rendering Options
+- Batched and Non-Batched Rendering Options
 
 ## Changes
 
-- Mouse Position
-- Non-Batched Line Rendering
+- Fully Supported Batched Rendering for All Primitives and Textures

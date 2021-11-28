@@ -1660,6 +1660,90 @@ void SBRE_batch_render_quad_ext(Vec2 pos, float width, float height, float rotat
 
 
 
+void SBRE_batch_render_quad_outline(Vec2 pos, float width, float height, float border, Color quad_color, Color border_color) {
+
+	if (_SBRE_batch_renderer.index_count + (5 * 6) >= MAX_INDEX || _SBRE_batch_renderer.texture_index > MAX_TEXTURE_SLOTS) {
+
+		SBRE_end_batch();
+		SBRE_render_batch(false);
+		SBRE_begin_batch();
+	}
+
+
+	/* Calculate Texture Position */
+
+	Rectangle text_rect = (Rectangle) {
+		.position = (Vec2) { 0.0f, 0.0f },
+		.width 	= 1.0f,
+		.height = 1.0f
+	};
+
+
+	/* Set Vertices of Quad */
+
+	_SBRE_batch_set_vertex_buffer(pos, width, height, quad_color, 0, text_rect, DRAW_TYPE_QUAD, 0);
+
+
+	/* Set Vertices of Lines */
+
+	Vec2 quad_vertices[4];
+
+	quad_vertices[0] = (*(_SBRE_batch_renderer.quad_buffer_ptr - 4)).pos;
+	quad_vertices[1] = (*(_SBRE_batch_renderer.quad_buffer_ptr - 3)).pos;
+	quad_vertices[2] = (*(_SBRE_batch_renderer.quad_buffer_ptr - 1)).pos;
+	quad_vertices[3] = (*(_SBRE_batch_renderer.quad_buffer_ptr - 2)).pos;
+
+	for (int i = 0; i < 4; ++i) {
+
+		int next_index = (i == 3) ? 0 : i + 1;
+		_SBRE_batch_set_vertex_buffer_line(quad_vertices[next_index], quad_vertices[i], border, border_color, text_rect);
+	}
+}
+
+
+
+void SBRE_batch_render_quad_outline_ext(Vec2 pos, float width, float height, float border, float rotation, Color quad_color, Color border_color) {
+
+	if (_SBRE_batch_renderer.index_count + (5 * 6) >= MAX_INDEX || _SBRE_batch_renderer.texture_index > MAX_TEXTURE_SLOTS) {
+
+		SBRE_end_batch();
+		SBRE_render_batch(false);
+		SBRE_begin_batch();
+	}
+
+
+	/* Calculate Texture Position */
+
+	Rectangle text_rect = (Rectangle) {
+		.position = (Vec2) { 0.0f, 0.0f },
+		.width 	= 1.0f,
+		.height = 1.0f
+	};
+
+
+	/* Set Vertices of Quad */
+
+	_SBRE_batch_set_vertex_buffer_rotated(pos, width, height, quad_color, 0, text_rect, rotation);
+
+
+	/* Set Vertices of Lines */
+
+	Vec2 quad_vertices[4];
+
+	quad_vertices[0] = (*(_SBRE_batch_renderer.quad_buffer_ptr - 4)).pos;
+	quad_vertices[1] = (*(_SBRE_batch_renderer.quad_buffer_ptr - 3)).pos;
+	quad_vertices[2] = (*(_SBRE_batch_renderer.quad_buffer_ptr - 1)).pos;
+	quad_vertices[3] = (*(_SBRE_batch_renderer.quad_buffer_ptr - 2)).pos;
+
+	for (int i = 0; i < 4; ++i) {
+
+		int next_index = (i == 3) ? 0 : i + 1;
+		_SBRE_batch_set_vertex_buffer_line(quad_vertices[i], quad_vertices[next_index], border, border_color, text_rect);
+	}
+}
+
+
+
 void SBRE_batch_render_circle(Vec2 pos, float radius, Color color) {
 
 	if (_SBRE_batch_renderer.index_count >= MAX_INDEX || _SBRE_batch_renderer.texture_index > MAX_TEXTURE_SLOTS) {
