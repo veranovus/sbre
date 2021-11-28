@@ -5,6 +5,7 @@
 /* GLFW / Window */
 
 GLFWwindow* _SBRE_main_window;
+static uint32_t _SBRE_SCREEN_WIDTH, _SBRE_SCREEN_HEIGHT;
 
 
 
@@ -84,6 +85,16 @@ double SBRE_frame_time(void) {
 
 /* Input */
 
+Vec2 SBRE_get_mouse_pos(void) {
+
+	double xpos, ypos;
+	glfwGetCursorPos(_SBRE_main_window, &xpos, &ypos);
+
+	return (Vec2) { xpos, (_SBRE_SCREEN_HEIGHT - ypos) };
+}
+
+
+
 bool SBRE_get_key_press(int key_code) {
 
 	return glfwGetKey(_SBRE_main_window, key_code) == GLFW_PRESS;
@@ -133,6 +144,12 @@ bool SBRE_init(int SCREEN_WIDTH, int SCREEN_HEIGHT, const char* TITLE, int vsync
     glfwMakeContextCurrent(window);
 
 
+	// Set the screen width and height
+
+	_SBRE_SCREEN_WIDTH  = SCREEN_WIDTH;
+	_SBRE_SCREEN_HEIGHT = SCREEN_HEIGHT;
+
+
     // Enable-Disable V-Sync
 
     glfwSwapInterval(vsync);
@@ -171,7 +188,7 @@ bool SBRE_init(int SCREEN_WIDTH, int SCREEN_HEIGHT, const char* TITLE, int vsync
 	};
 
 	_SBRE_set_projection_marix(mvp);
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	
 	return true;
 }
 

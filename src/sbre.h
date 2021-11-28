@@ -328,7 +328,11 @@ double SBRE_frame_time(void);
 
 
 
-/* Input */ 
+/* Input */
+
+Vec2 SBRE_get_mouse_pos(void);
+
+
 
 bool SBRE_get_key_press(int key_code);
 
@@ -433,6 +437,10 @@ void _SBRE_set_view_matrix(Mat4 view);
 
 /* Individual Render Functions (Not batched) */
 
+void SBRE_draw_line(Vec2 start, Vec2 end, float width, Color color);
+
+
+
 /* Draws a colored quad with the given parameters */
 void SBRE_draw_quad(Vec2 pos, float width, float height, Color color);
 
@@ -488,15 +496,15 @@ void SBRE_render_batch(bool clear_stats);
 
 /* Batch Renderer Render Functions */
 
+void SBRE_batch_render_line(Vec2 start, Vec2 end, float width, Color color);
+
+
+
 void SBRE_batch_render_quad(Vec2 pos, float width, float height, Color color);
 
 
 
 void SBRE_batch_render_quad_ext(Vec2 pos, float width, float height, float rotation, Color color);
-
-
-
-void SBRE_batch_render_line(Vec2 start, Vec2 end, float width, Color color);
 
 
 

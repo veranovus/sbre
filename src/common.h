@@ -238,7 +238,11 @@ double SBRE_frame_time(void);
 
 
 
-/* Input */ 
+/* Input */
+
+Vec2 SBRE_get_mouse_pos(void);
+
+
 
 bool SBRE_get_key_press(int key_code);
 
