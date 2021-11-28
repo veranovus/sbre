@@ -95,6 +95,13 @@ Vec2 SBRE_get_mouse_pos(void) {
 
 
 
+bool SBRE_get_mouse_button(int button) {
+
+	return glfwGetMouseButton(_SBRE_main_window, 0);
+}
+
+
+
 bool SBRE_get_key_press(int key_code) {
 
 	return glfwGetKey(_SBRE_main_window, key_code) == GLFW_PRESS;

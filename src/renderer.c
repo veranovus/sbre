@@ -3,6 +3,10 @@
 #include "util/util.h"
 
 
+/*
+ * TODO : Switch non-batched rendering to a single fragment shader, and remove Vertex completelly. 
+ */
+
 
 /* Structs */
 

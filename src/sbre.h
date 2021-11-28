@@ -334,6 +334,10 @@ Vec2 SBRE_get_mouse_pos(void);
 
 
 
+bool SBRE_get_mouse_button(int button);
+
+
+
 bool SBRE_get_key_press(int key_code);
 
 
