@@ -373,6 +373,10 @@ void SBRE_free_font(Font* font);
 
 
 
+Vec2 SBRE_font_get_text_size(Font* font, const char* text);
+
+
+
 /* Shader */
 
 /* Sets the shader to be used when rendering */

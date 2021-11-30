@@ -64,15 +64,18 @@ int main(void) {
 
 		SBRE_batch_render_quad_outline(SBRE_VEC2(150, 150), 50, 50, 2, SBRE_RED, SBRE_WHITE);
 		
-
 		SBRE_batch_render_quad_outline_ext(SBRE_VEC2(200, 150), 50, 50, 2, rotation, SBRE_RED, SBRE_WHITE);
+
+
+		SBRE_batch_render_text(SBRE_VEC2(5, 5), fps_text, font, SBRE_WHITE);
+
+		Vec2 size = SBRE_font_get_text_size(font, fps_text);
+		SBRE_batch_render_quad_outline(SBRE_VEC2(5, 5), size.x, size.y, 1, SBRE_TRANSPARENT, SBRE_GREEN);
 
 
 		SBRE_end_batch();
 		SBRE_render_batch(true);
 
-		
-		SBRE_draw_text(SBRE_VEC2(0, 0), fps_text, font, SBRE_WHITE);
 
 		SBRE_display();
 		SBRE_poll_events();

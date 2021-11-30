@@ -185,3 +185,33 @@ void SBRE_free_font(Font* font) {
     
     font = NULL;
 }
+
+
+
+Vec2 SBRE_font_get_text_size(Font* font, const char* text) {
+
+    float width = 0;
+    float height = 0;
+
+
+    uint32_t text_len = strlen(text);
+	for (int i = 0; i < text_len; ++i) {
+		
+		SBRE_Character crnt_char = font->_characters[text[i]];
+
+
+        if (i < text_len - 1)
+            width += crnt_char.bearing.x + (crnt_char.advance >> 6);
+        else 
+            width += crnt_char.size.x + crnt_char.bearing.x;
+
+
+        float char_height = font->biggest_char.y - crnt_char.size.y;
+        printf("Char Height : %f\n", char_height);
+        if (char_height > height)
+            height = char_height;
+	}
+
+
+    return (Vec2) { width, height };
+}

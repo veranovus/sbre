@@ -90,7 +90,7 @@ Vec2 SBRE_get_mouse_pos(void) {
 	double xpos, ypos;
 	glfwGetCursorPos(_SBRE_main_window, &xpos, &ypos);
 
-	return (Vec2) { xpos, (_SBRE_SCREEN_HEIGHT - ypos) };
+	return (Vec2) { xpos, ypos };
 }
 
 
