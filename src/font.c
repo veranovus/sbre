@@ -207,7 +207,6 @@ Vec2 SBRE_font_get_text_size(Font* font, const char* text) {
 
 
         float char_height = font->biggest_char.y - crnt_char.size.y;
-        printf("Char Height : %f\n", char_height);
         if (char_height > height)
             height = char_height;
 	}
