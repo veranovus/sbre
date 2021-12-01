@@ -41,10 +41,21 @@ int main(void) {
 		uint32_t fps = SBRE_fps();
 		snprintf(fps_text, 12, "FPS : %d", fps);
 
+		const SBRE_CharInput* char_pressed = SBRE_get_chars_pressed();
 		const SBRE_KeyInput* keys_pressed = SBRE_get_keys_pressed();
 
-		for (int i = 0; i < keys_pressed->input_count; ++i)
-			printf("Key Pressed, Input Count : %c, %d \n", (char) keys_pressed->keys_pressed[i], keys_pressed->input_count);
+		for (int i = 0; i < keys_pressed->input_count; ++i) {
+
+			if (keys_pressed->keys_pressed[i].key == SBRE_KEY_BACKSPACE) {
+
+				printf("Key : Backspace, Action : %d\n", keys_pressed->keys_pressed[i].action_type);
+			}
+			else {
+				
+				printf("Key : %c, Action : %d\n", keys_pressed->keys_pressed[i].key, keys_pressed->keys_pressed[i].action_type);
+			}
+		}
+		
 
 		rotation += 0.005;
 

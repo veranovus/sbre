@@ -31,6 +31,7 @@ static double _SBRE_frame_time;
 
 /* Keyboard Input */
 
+static SBRE_CharInput _SBRE_char_input;
 static SBRE_KeyInput _SBRE_keyboard_input;
 
 
@@ -108,29 +109,6 @@ bool SBRE_get_mouse_button(int button) {
 
 
 
-const SBRE_KeyInput* SBRE_get_keys_pressed(void) {
-
-	return &_SBRE_keyboard_input;
-}
-
-
-
-void _SBRE_read_key_input(GLFWwindow* window, uint32_t code_point) {
-
-	_SBRE_keyboard_input.keys_pressed[_SBRE_keyboard_input.input_count] = (char) code_point;
-	_SBRE_keyboard_input.input_count++;
-}
-
-
-
-void _SBRE_clear_key_input_buffer(void) {
-
-	memset(_SBRE_keyboard_input.keys_pressed, 0, 256);
-	_SBRE_keyboard_input.input_count = 0;
-}
-
-
-
 bool SBRE_get_key_press(int key_code) {
 
 	return glfwGetKey(_SBRE_main_window, key_code) == GLFW_PRESS;
@@ -143,6 +121,54 @@ bool SBRE_get_key_release(int key_code) {
 	return glfwGetKey(_SBRE_main_window, key_code) == GLFW_RELEASE;
 }
 
+
+
+const SBRE_CharInput* SBRE_get_chars_pressed(void) {
+
+	return &_SBRE_char_input;
+}
+
+
+
+const SBRE_KeyInput* SBRE_get_keys_pressed(void) {
+
+	return &_SBRE_keyboard_input;
+}
+
+
+
+void _SBRE_char_callback(GLFWwindow* window, uint32_t code_point) {
+
+	_SBRE_char_input.keys_pressed[_SBRE_char_input.input_count] = code_point;
+
+	_SBRE_char_input.input_count++;
+}
+
+
+
+void _SBRE_key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+
+	_SBRE_keyboard_input.keys_pressed[_SBRE_keyboard_input.input_count].key = key;
+	_SBRE_keyboard_input.keys_pressed[_SBRE_keyboard_input.input_count].action_type = action;
+
+	_SBRE_keyboard_input.input_count++;
+}
+
+
+
+void _SBRE_clear_char_input_buffer(void) {
+
+	memset(_SBRE_char_input.keys_pressed, 0, 256);
+	_SBRE_char_input.input_count = 0;
+}
+
+
+
+void _SBRE_clear_key_input_buffer(void) {
+
+	memset(_SBRE_keyboard_input.keys_pressed, 0, 256 * sizeof(SBRE_KeyAction));
+	_SBRE_keyboard_input.input_count = 0;
+}
 
 
 
@@ -228,7 +254,16 @@ bool SBRE_init(int SCREEN_WIDTH, int SCREEN_HEIGHT, const char* TITLE, int vsync
 
 	// Keyboard Input
 
-	glfwSetCharCallback(_SBRE_main_window, _SBRE_read_key_input);
+	glfwSetCharCallback(_SBRE_main_window, _SBRE_char_callback);
+
+	_SBRE_char_input = (SBRE_CharInput) {
+
+		.input_count = 0,
+		.max_input_per_frame = 256
+	};
+
+
+	glfwSetKeyCallback(_SBRE_main_window, _SBRE_key_callback);
 
 	_SBRE_keyboard_input = (SBRE_KeyInput) {
 
@@ -283,7 +318,9 @@ void SBRE_display(void) {
 
 void SBRE_poll_events(void) {
 
+	_SBRE_clear_char_input_buffer();
 	_SBRE_clear_key_input_buffer();
+
 	glfwPollEvents();
 }
 

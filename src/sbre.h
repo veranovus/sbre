@@ -189,6 +189,15 @@
 #define SBRE_KEY_LAST   SBRE_KEY_MENU
 
 
+/* Input Actions */
+
+#define SBRE_ACTION_PRESSED		0
+
+#define SBRE_ACTION_RELEASED	1
+
+#define SBRE_ACTION_HOLD		2
+
+
 
 /* Typdefs */
 
@@ -266,9 +275,29 @@ typedef struct Font {
 
 
 
+typedef struct SBRE_CharInput {
+
+	uint32_t keys_pressed[256];
+
+	uint32_t input_count;
+	uint32_t max_input_per_frame;
+
+} SBRE_CharInput;
+
+
+
+typedef struct SBRE_KeyAction {
+
+	uint32_t key;
+	uint32_t action_type;
+
+} SBRE_KeyAction;
+
+
+
 typedef struct SBRE_KeyInput {
 
-	char keys_pressed[256];
+	SBRE_KeyAction keys_pressed[256];
 
 	uint32_t input_count;
 	uint32_t max_input_per_frame;
@@ -349,16 +378,21 @@ bool SBRE_get_mouse_button(int button);
 
 
 
-/* Returns the every key pressed this frame, key data is cleared at the end of every frame automatically. */
-const SBRE_KeyInput* SBRE_get_keys_pressed(void);
-
-
-
 bool SBRE_get_key_press(int key_code);
 
 
 
 bool SBRE_get_key_release(int key_code);
+
+
+
+/* Similar to get_keys_pressed but this is used to read keyboard for text input. */
+const SBRE_CharInput* SBRE_get_chars_pressed(void);
+
+
+
+/* Returns the every key pressed this frame, key data is cleared at the end of every frame automatically. */
+const SBRE_KeyInput* SBRE_get_keys_pressed(void);
 
 
 

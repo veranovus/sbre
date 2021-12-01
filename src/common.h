@@ -184,9 +184,29 @@ typedef struct Font {
 
 
 
+typedef struct SBRE_CharInput {
+
+	uint32_t keys_pressed[256];
+
+	uint32_t input_count;
+	uint32_t max_input_per_frame;
+
+} SBRE_CharInput;
+
+
+
+typedef struct SBRE_KeyAction {
+
+	uint32_t key;
+	uint32_t action_type;
+
+} SBRE_KeyAction;
+
+
+
 typedef struct SBRE_KeyInput {
 
-	char keys_pressed[256];
+	SBRE_KeyAction keys_pressed[256];
 
 	uint32_t input_count;
 	uint32_t max_input_per_frame;
@@ -259,11 +279,19 @@ bool SBRE_get_mouse_button(int button);
 
 
 
+bool SBRE_get_key_press(int key_code);
+
+
+
+bool SBRE_get_key_release(int key_code);
+
+
+
 const SBRE_KeyInput* SBRE_get_keys_pressed(void);
 
 
 
-void _SBRE_read_key_input(GLFWwindow* window, uint32_t code_point);
+void _SBRE_key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 
 
@@ -271,11 +299,15 @@ void _SBRE_clear_key_input_buffer(void);
 
 
 
-bool SBRE_get_key_press(int key_code);
+const SBRE_CharInput* SBRE_get_chars_pressed(void);
 
 
 
-bool SBRE_get_key_release(int key_code);
+void _SBRE_char_callback(GLFWwindow* window, uint32_t code_point);
+
+
+
+void _SBRE_clear_char_input_buffer(void);
 
 
 
