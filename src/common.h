@@ -184,6 +184,17 @@ typedef struct Font {
 
 
 
+typedef struct SBRE_KeyInput {
+
+	char keys_pressed[256];
+
+	uint32_t input_count;
+	uint32_t max_input_per_frame;
+
+} SBRE_KeyInput;
+
+
+
 /* Core */
 
 bool SBRE_init(int SCREEN_WIDTH, int SCREEN_HEIGHT, const char* TITLE, int VSync);
@@ -245,6 +256,18 @@ Vec2 SBRE_get_mouse_pos(void);
 
 
 bool SBRE_get_mouse_button(int button);
+
+
+
+const SBRE_KeyInput* SBRE_get_keys_pressed(void);
+
+
+
+void _SBRE_read_key_input(GLFWwindow* window, uint32_t code_point);
+
+
+
+void _SBRE_clear_key_input_buffer(void);
 
 
 

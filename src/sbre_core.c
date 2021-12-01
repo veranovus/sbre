@@ -29,6 +29,12 @@ static double _SBRE_frame_time;
 
 
 
+/* Keyboard Input */
+
+static SBRE_KeyInput _SBRE_keyboard_input;
+
+
+
 /* Delta Time */
 
 void SBRE_calculate_delta_time(void) {
@@ -98,6 +104,29 @@ Vec2 SBRE_get_mouse_pos(void) {
 bool SBRE_get_mouse_button(int button) {
 
 	return glfwGetMouseButton(_SBRE_main_window, 0);
+}
+
+
+
+const SBRE_KeyInput* SBRE_get_keys_pressed(void) {
+
+	return &_SBRE_keyboard_input;
+}
+
+
+
+void _SBRE_read_key_input(GLFWwindow* window, uint32_t code_point) {
+
+	_SBRE_keyboard_input.keys_pressed[_SBRE_keyboard_input.input_count] = (char) code_point;
+	_SBRE_keyboard_input.input_count++;
+}
+
+
+
+void _SBRE_clear_key_input_buffer(void) {
+
+	memset(_SBRE_keyboard_input.keys_pressed, 0, 256);
+	_SBRE_keyboard_input.input_count = 0;
 }
 
 
@@ -195,6 +224,18 @@ bool SBRE_init(int SCREEN_WIDTH, int SCREEN_HEIGHT, const char* TITLE, int vsync
 	};
 
 	_SBRE_set_projection_marix(mvp);
+
+
+	// Keyboard Input
+
+	glfwSetCharCallback(_SBRE_main_window, _SBRE_read_key_input);
+
+	_SBRE_keyboard_input = (SBRE_KeyInput) {
+
+		.input_count = 0,
+		.max_input_per_frame = 256
+	};
+
 	
 	return true;
 }
@@ -241,7 +282,8 @@ void SBRE_display(void) {
 
 
 void SBRE_poll_events(void) {
-	
+
+	_SBRE_clear_key_input_buffer();
 	glfwPollEvents();
 }
 

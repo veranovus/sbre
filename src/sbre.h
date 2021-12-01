@@ -266,6 +266,17 @@ typedef struct Font {
 
 
 
+typedef struct SBRE_KeyInput {
+
+	char keys_pressed[256];
+
+	uint32_t input_count;
+	uint32_t max_input_per_frame;
+
+} SBRE_KeyInput;
+
+
+
 /* Core */
 
 /* Initializez GLFW, GLEW and all other necessary components of the engine,
@@ -335,6 +346,11 @@ Vec2 SBRE_get_mouse_pos(void);
 
 
 bool SBRE_get_mouse_button(int button);
+
+
+
+/* Returns the every key pressed this frame, key data is cleared at the end of every frame automatically. */
+const SBRE_KeyInput* SBRE_get_keys_pressed(void);
 
 
 
