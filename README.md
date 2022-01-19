@@ -4,7 +4,7 @@
  You can easilly write and use your custom shaders in SBRE. There are batched and non-batched rendering
  options availible. There is no 3D support currently.
 
- > Current version 0.12
+ > Current version 0.12a
 
 ## Capabilities
 
@@ -17,4 +17,4 @@
 
 ## Changes
 
-- Keyboard Input Completed
+- Mouse Input Fixed

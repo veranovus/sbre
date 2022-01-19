@@ -104,7 +104,7 @@ Vec2 SBRE_get_mouse_pos(void) {
 
 bool SBRE_get_mouse_button(int button) {
 
-	return glfwGetMouseButton(_SBRE_main_window, 0);
+	return glfwGetMouseButton(_SBRE_main_window, button);
 }
 
 
