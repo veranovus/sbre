@@ -206,9 +206,9 @@ Vec2 SBRE_font_get_text_size(Font* font, const char* text) {
             width += crnt_char.size.x + crnt_char.bearing.x;
 
 
-        float char_height = font->biggest_char.y - crnt_char.size.y;
-        if (char_height > height)
-            height = char_height;
+        //float char_height = font->biggest_char.y - crnt_char.size.y; // TODO : Remove this line
+        if (crnt_char.size.y > height)
+            height = crnt_char.size.y;
 	}
 
 

@@ -22,7 +22,7 @@ int main(void) {
 	float speed = 100;
 
 
-	Font* font = SBRE_create_font("../res/font/press_start_2p/PressStart2P.ttf", 18, SBRE_NEAREST);
+	Font* font = SBRE_create_font("../res/font/arial/Arial.ttf", 24, SBRE_LINEAR);
 
 	Texture* t = SBRE_load_texture("../res/sprite_sheet.png", SBRE_NEAREST);
 	t->width  = 64;
@@ -84,9 +84,17 @@ int main(void) {
 
 
 		SBRE_batch_render_text(SBRE_VEC2(5, 5), fps_text, font, SBRE_WHITE);
+		SBRE_batch_render_text(SBRE_VEC2(5, 400), "QWERTYUIOP[]ASDFGHJK(L);'\\`ZXCVBNM,./#+-0><|", font, SBRE_WHITE);
+
 
 		Vec2 size = SBRE_font_get_text_size(font, fps_text);
 		SBRE_batch_render_quad_outline(SBRE_VEC2(5, 5), size.x, size.y, 1, SBRE_TRANSPARENT, SBRE_GREEN);
+
+		size = SBRE_font_get_text_size(font, "QWERTYUIOP[]ASDFGHJK(L);'\\`ZXCVBNM,./#+-0><|");
+		SBRE_batch_render_quad_outline(SBRE_VEC2(5, 400), size.x, size.y, 1, SBRE_TRANSPARENT, SBRE_GREEN);
+
+
+		SBRE_batch_render_quad_outline(SBRE_VEC2(0, 0), 5, 5, 1, SBRE_TRANSPARENT, SBRE_RED);
 
 
 		SBRE_end_batch();

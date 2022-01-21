@@ -1312,9 +1312,13 @@ void SBRE_draw_text(Vec2 pos, const char* text, Font* font, Color color) {
 		};
 		
 
+		float y_offset = (font->biggest_char.y - font->_characters['A'].bearing.y);
+		float big_char_y_offset = (crnt_char.size.y >= font->_characters['['].size.y) ? (font->_characters['A'].size.y - crnt_char.size.y) / 2 : 0;
+
+
 		Vec2 char_pos = SBRE_VEC2(
 			crnt_char_pos.x + crnt_char.bearing.x,
-			crnt_char_pos.y + (font->biggest_char.y - crnt_char.size.y) + (crnt_char.size.y - crnt_char.bearing.y)
+			crnt_char_pos.y + (font->biggest_char.y - crnt_char.size.y) + (crnt_char.size.y - crnt_char.bearing.y) - y_offset + big_char_y_offset
 		);
 
 
@@ -1969,9 +1973,14 @@ void SBRE_batch_render_text(Vec2 pos, const char* text, Font* font, Color color)
 		};
 		
 
+		float y_offset = (font->biggest_char.y - font->_characters['A'].bearing.y);
+		float big_char_y_offset = (crnt_char.size.y >= font->_characters['['].size.y) ? (font->_characters['A'].size.y - crnt_char.size.y) / 2 : 0;
+
+
 		Vec2 char_pos = SBRE_VEC2(
 			crnt_char_pos.x + crnt_char.bearing.x,
-			crnt_char_pos.y + (font->biggest_char.y - crnt_char.size.y) + (crnt_char.size.y - crnt_char.bearing.y)
+			// TODO : This mathematical calculation is not the best. Refactor it. Do the same for non-batched draw version
+			crnt_char_pos.y + (font->biggest_char.y - crnt_char.size.y) + (crnt_char.size.y - crnt_char.bearing.y) - y_offset + big_char_y_offset
 		);
 
 
