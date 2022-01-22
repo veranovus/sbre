@@ -378,6 +378,16 @@ bool SBRE_get_mouse_button(int button);
 
 
 
+// Returns true for a single frame when the mouse button is pressed.
+bool SBRE_get_mouse_button_pressed(int button);
+
+
+
+// Returns true for a single frame when the mouse button is released.
+bool SBRE_get_mouse_button_released(int button);
+
+
+
 bool SBRE_get_key_press(int key_code);
 
 

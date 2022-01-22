@@ -215,6 +215,25 @@ typedef struct SBRE_KeyInput {
 
 
 
+typedef struct SBRE_MouseAction {
+
+	bool pressed;
+	bool just_pressed;
+	bool just_released;
+
+} SBRE_MouseAction;
+
+
+
+typedef struct SBRE_MouseInput {
+
+	SBRE_MouseAction buttons[8];
+	uint32_t max_button_count;
+
+} SBRE_MouseInput;
+
+
+
 /* Core */
 
 bool SBRE_init(int SCREEN_WIDTH, int SCREEN_HEIGHT, const char* TITLE, int VSync);
@@ -279,6 +298,14 @@ bool SBRE_get_mouse_button(int button);
 
 
 
+bool SBRE_get_mouse_button_pressed(int button);
+
+
+
+bool SBRE_get_mouse_button_released(int button);
+
+
+
 bool SBRE_get_key_press(int key_code);
 
 
@@ -291,15 +318,23 @@ const SBRE_KeyInput* SBRE_get_keys_pressed(void);
 
 
 
+const SBRE_CharInput* SBRE_get_chars_pressed(void);
+
+
+
+void _SBRE_mouse_callback(GLFWwindow* window, int button, int action, int mods);
+
+
+
+void _SBRE_clear_mouse_input_buffer(void);
+
+
+
 void _SBRE_key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 
 
 void _SBRE_clear_key_input_buffer(void);
-
-
-
-const SBRE_CharInput* SBRE_get_chars_pressed(void);
 
 
 

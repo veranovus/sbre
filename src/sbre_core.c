@@ -36,6 +36,12 @@ static SBRE_KeyInput _SBRE_keyboard_input;
 
 
 
+/* Mouse Input */
+
+static SBRE_MouseInput _SBRE_mouse_input;
+
+
+
 /* Delta Time */
 
 void SBRE_calculate_delta_time(void) {
@@ -104,7 +110,30 @@ Vec2 SBRE_get_mouse_pos(void) {
 
 bool SBRE_get_mouse_button(int button) {
 
-	return glfwGetMouseButton(_SBRE_main_window, button);
+	if (button >= _SBRE_mouse_input.max_button_count)
+		return false;
+
+	return _SBRE_mouse_input.buttons[button].pressed;
+}
+
+
+
+bool SBRE_get_mouse_button_pressed(int button) {
+
+	if (button >= _SBRE_mouse_input.max_button_count)
+		return false;
+
+	return _SBRE_mouse_input.buttons[button].just_pressed;
+}
+
+
+
+bool SBRE_get_mouse_button_released(int button) {
+
+	if (button >= _SBRE_mouse_input.max_button_count)
+		return false;
+
+	return _SBRE_mouse_input.buttons[button].just_released;
 }
 
 
@@ -152,6 +181,39 @@ void _SBRE_key_callback(GLFWwindow* window, int key, int scancode, int action, i
 	_SBRE_keyboard_input.keys_pressed[_SBRE_keyboard_input.input_count].action_type = action;
 
 	_SBRE_keyboard_input.input_count++;
+}
+
+
+
+void _SBRE_mouse_callback(GLFWwindow* window, int button, int action, int mods) {
+	
+	SBRE_MouseAction* mouse_action = &_SBRE_mouse_input.buttons[button];
+
+	if (action == GLFW_PRESS) {
+
+		mouse_action->just_pressed  = true;
+		mouse_action->pressed = true;
+	}
+	else if (action == GLFW_RELEASE) {
+
+		mouse_action->just_released = true;
+		mouse_action->pressed = false;
+	}
+}
+
+
+
+void _SBRE_clear_mouse_input_buffer(void) {
+
+	for (int i = 0; i < _SBRE_mouse_input.max_button_count; ++i) {
+
+		SBRE_MouseAction* mouse_action = &_SBRE_mouse_input.buttons[i];
+
+		if (mouse_action->just_pressed)
+			mouse_action->just_pressed = false;
+		else if (mouse_action->just_released)
+			mouse_action->just_released = false;
+	}
 }
 
 
@@ -271,6 +333,16 @@ bool SBRE_init(int SCREEN_WIDTH, int SCREEN_HEIGHT, const char* TITLE, int vsync
 		.max_input_per_frame = 256
 	};
 
+
+	// Mouse Input
+
+	glfwSetMouseButtonCallback(_SBRE_main_window, _SBRE_mouse_callback);
+
+	_SBRE_mouse_input = (SBRE_MouseInput) {
+
+		.max_button_count = 9
+	};
+
 	
 	return true;
 }
@@ -320,6 +392,7 @@ void SBRE_poll_events(void) {
 
 	_SBRE_clear_char_input_buffer();
 	_SBRE_clear_key_input_buffer();
+	_SBRE_clear_mouse_input_buffer();
 
 	glfwPollEvents();
 }

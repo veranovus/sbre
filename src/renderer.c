@@ -1300,6 +1300,7 @@ void SBRE_draw_text(Vec2 pos, const char* text, Font* font, Color color) {
 
 	Vec2 crnt_char_pos = pos;
 
+
 	uint32_t text_len = strlen(text);
 	for (int i = 0; i < text_len; ++i) {
 		
@@ -1318,6 +1319,7 @@ void SBRE_draw_text(Vec2 pos, const char* text, Font* font, Color color) {
 
 		Vec2 char_pos = SBRE_VEC2(
 			crnt_char_pos.x + crnt_char.bearing.x,
+			// TODO : Make this mathematical calculation simpler. Do the same for the non-batched rendering.
 			crnt_char_pos.y + (font->biggest_char.y - crnt_char.size.y) + (crnt_char.size.y - crnt_char.bearing.y) - y_offset + big_char_y_offset
 		);
 

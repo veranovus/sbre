@@ -55,6 +55,14 @@ int main(void) {
 				printf("Key : %c, Action : %d\n", keys_pressed->keys_pressed[i].key, keys_pressed->keys_pressed[i].action_type);
 			}
 		}
+
+
+		if (SBRE_get_mouse_button_pressed(0))
+			printf("[INFO][Mouse button 0 just pressed.]\n");
+		else if (SBRE_get_mouse_button_released(0))
+			printf("[INFO][Mouse button 0 just released.]\n");
+		else if (SBRE_get_mouse_button(0))
+			printf("[INFO][Mouse button 0 is still pressed.]\n");
 		
 
 		rotation += 0.005;
