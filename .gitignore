@@ -1,5 +1,6 @@
 .vscode
 .cache
+.idea/
+cmake-build-debug/
 build
-res
 build.sh

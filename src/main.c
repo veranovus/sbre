@@ -18,15 +18,11 @@ int main(void) {
 	char fps_text[12];
 
 
+	Font* font = SBRE_create_font("../res/font/arial/arial.ttf", 24, SBRE_LINEAR);
+
+
 	Vec2 pos = SBRE_VEC2(0, 0);
 	float speed = 100;
-
-
-	Font* font = SBRE_create_font("../res/font/arial/Arial.ttf", 24, SBRE_LINEAR);
-
-	Texture* t = SBRE_load_texture("../res/sprite_sheet.png", SBRE_NEAREST);
-	t->width  = 64;
-	t->height = 64;
 
 
 	float rotation = 30;
@@ -82,42 +78,19 @@ int main(void) {
 		SBRE_clear();
 
 
-		SBRE_begin_batch();
+		for (int i = 0; i < 1; ++i) {
 
-		SBRE_batch_render_line(SBRE_VEC2(780, 500), SBRE_VEC2(50, 100), 1, SBRE_WHITE);
+			SBRE_draw_quad((Vec2){5 + i % (SCREEN_WIDTH / 15) * 15, 5 + i / (SCREEN_WIDTH / 15) * 15}, 10, 10, SBRE_BLUE);
+		}
 
-		SBRE_batch_render_quad_outline(SBRE_VEC2(150, 150), 50, 50, 2, SBRE_RED, SBRE_WHITE);
-		
-		SBRE_batch_render_quad_outline_ext(SBRE_VEC2(200, 150), 50, 50, 2, rotation, SBRE_RED, SBRE_WHITE);
-
-
-		SBRE_batch_render_text(SBRE_VEC2(5, 5), fps_text, font, SBRE_WHITE);
-		SBRE_batch_render_text(SBRE_VEC2(5, 400), "QWERTYUIOP[]ASDFGHJK(L);'\\`ZXCVBNM,./#+-0><|", font, SBRE_WHITE);
-
-
-		Vec2 size = SBRE_font_get_text_size(font, fps_text);
-		SBRE_batch_render_quad_outline(SBRE_VEC2(5, 5), size.x, size.y, 1, SBRE_TRANSPARENT, SBRE_GREEN);
-
-		size = SBRE_font_get_text_size(font, "QWERTYUIOP[]ASDFGHJK(L);'\\`ZXCVBNM,./#+-0><|");
-		SBRE_batch_render_quad_outline(SBRE_VEC2(5, 400), size.x, size.y, 1, SBRE_TRANSPARENT, SBRE_GREEN);
-
-
-		SBRE_batch_render_quad_outline(SBRE_VEC2(0, 0), 5, 5, 1, SBRE_TRANSPARENT, SBRE_RED);
-
-
-		SBRE_end_batch();
-		SBRE_render_batch(true);
+		SBRE_draw_text((Vec2){0, 0}, fps_text, font, SBRE_WHITE);
 
 
 		SBRE_display();
 		SBRE_poll_events();
 	}
-	
 
-	/* Cleanup */
 	SBRE_free_font(font);
-	SBRE_free_texture(t);
-
 
 	SBRE_terminate();
 	return 0;
